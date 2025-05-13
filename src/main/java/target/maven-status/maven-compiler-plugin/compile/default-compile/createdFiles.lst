@@ -1,0 +1,17 @@
+com/kungnection/app/model/Setting.class
+com/kungnection/app/security/JwtUtil.class
+com/kungnection/app/model/Channel.class
+com/kungnection/app/model/State.class
+com/kungnection/app/controller/AuthController.class
+com/kungnection/app/model/Friendship.class
+com/kungnection/app/service/UserService.class
+com/kungnection/app/model/User.class
+com/kungnection/app/HelloController.class
+com/kungnection/app/KungnectionApplication.class
+com/kungnection/app/repository/ChannelRepository.class
+com/kungnection/app/controller/UserController.class
+com/kungnection/app/model/ChannelMembership.class
+com/kungnection/app/repository/ChannelMembershipRepository.class
+com/kungnection/app/dto/LoginRequest.class
+com/kungnection/app/repository/FriendshipRepository.class
+com/kungnection/app/repository/UserRepository.class

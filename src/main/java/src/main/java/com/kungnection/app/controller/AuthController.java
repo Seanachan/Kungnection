@@ -1,0 +1,36 @@
+package com.kungnection.app.controller;
+
+import com.kungnection.app.model.User;
+import com.kungnection.app.service.UserService;
+import com.kungnection.app.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return userService.register(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user) {
+        User u = userService.login(user.getUsername(), user.getPassword());
+
+        if (u != null) {
+            String token = jwtUtil.generateToken(u.getUsername());
+            return ResponseEntity.ok().body(token);
+        } else {
+            return ResponseEntity.status(401).body("Login failed.");
+        }
+    }
+}

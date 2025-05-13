@@ -1,0 +1,17 @@
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/KungnectionApplication.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/controller/AuthController.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/controller/HelloController.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/controller/UserController.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/dto/LoginRequest.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/model/Channel.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/model/ChannelMembership.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/model/Friendship.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/model/Setting.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/model/State.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/model/User.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/repository/ChannelMembershipRepository.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/repository/ChannelRepository.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/repository/FriendshipRepository.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/repository/UserRepository.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/security/JwtUtil.java
+/Users/yeqinrong/Desktop/Project/kungnection-backend/src/main/java/com/kungnection/app/service/UserService.java
