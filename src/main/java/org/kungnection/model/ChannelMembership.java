@@ -1,4 +1,4 @@
-package com.kungnection.app.model;
+package org.kungnection.model;
 
 import jakarta.persistence.*;
 import lombok.*;

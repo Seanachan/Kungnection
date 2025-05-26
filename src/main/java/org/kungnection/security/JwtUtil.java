@@ -1,4 +1,4 @@
-package com.kungnection.app.security;
+package org.kungnection.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

@@ -1,7 +1,7 @@
-package com.kungnection.app.service;
+package org.kungnection.service;
 
-import com.kungnection.app.model.*;
-import com.kungnection.app.repository.*;
+import org.kungnection.model.*;
+import org.kungnection.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

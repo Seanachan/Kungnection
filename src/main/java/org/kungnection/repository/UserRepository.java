@@ -1,6 +1,6 @@
-package com.kungnection.app.repository;
+package org.kungnection.repository;
 
-import com.kungnection.app.model.User;
+import org.kungnection.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

@@ -1,8 +1,8 @@
-package com.kungnection.app.controller;
+package org.kungnection.controller;
 
-import com.kungnection.app.model.*;
-import com.kungnection.app.repository.UserRepository;
-import com.kungnection.app.service.UserService;
+import org.kungnection.model.*;
+import org.kungnection.repository.UserRepository;
+import org.kungnection.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

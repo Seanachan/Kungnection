@@ -1,4 +1,4 @@
-package com.kungnection.app.model;
+package org.kungnection.model;
 
 public enum State {
     ONLINE,        // 線上

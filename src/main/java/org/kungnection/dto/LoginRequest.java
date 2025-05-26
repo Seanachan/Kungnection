@@ -1,4 +1,4 @@
-package com.kungnection.app.dto;
+package org.kungnection.dto;
 
 import lombok.Data;
 

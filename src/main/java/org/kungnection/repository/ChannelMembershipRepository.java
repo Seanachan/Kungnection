@@ -1,8 +1,8 @@
-package com.kungnection.app.repository;
+package org.kungnection.repository;
 
-import com.kungnection.app.model.Channel;
-import com.kungnection.app.model.ChannelMembership;
-import com.kungnection.app.model.User;
+import org.kungnection.model.Channel;
+import org.kungnection.model.ChannelMembership;
+import org.kungnection.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

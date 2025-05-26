@@ -1,8 +1,8 @@
-package com.kungnection.app.controller;
+package org.kungnection.controller;
 
-import com.kungnection.app.model.User;
-import com.kungnection.app.service.UserService;
-import com.kungnection.app.security.JwtUtil;
+import org.kungnection.model.User;
+import org.kungnection.service.UserService;
+import org.kungnection.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
