@@ -10,27 +10,28 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "kungnection-secret-key-kungnection-secret-key"; // 必須至少256位元
+    private static final String SECRET_KEY = "kungnection-secret-key-kungnection-secret-key"; // 至少 256 bits
     private static final long EXPIRATION_TIME = 86400000; // 1 天（毫秒）
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    public String generateToken(String username) {
+    public String generateToken(Long userId) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256) // ✅ 修正這行
                 .compact();
     }
 
-    public String extractUsername(String token) {
-        return Jwts.parserBuilder()
+    public Long extractUserId(String token) {
+        String subject = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+        return Long.valueOf(subject);
     }
 
     public boolean validateToken(String token) {

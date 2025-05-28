@@ -24,10 +24,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        User u = userService.login(user.getUsername(), user.getPassword());
-
+        User u = userService.login(user.getEmail(), user.getPassword()); // ← 注意這裡是 getEmail()
         if (u != null) {
-            String token = jwtUtil.generateToken(u.getUsername());
+            String token = jwtUtil.generateToken(u.getId());
             return ResponseEntity.ok().body(token);
         } else {
             return ResponseEntity.status(401).body("Login failed.");

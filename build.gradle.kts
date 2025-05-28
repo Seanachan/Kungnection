@@ -34,6 +34,10 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
+
+    implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
 }
 
 tasks.test {

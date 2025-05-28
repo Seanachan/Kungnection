@@ -2,21 +2,28 @@ package org.kungnection.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
+
+import org.kungnection.model.Message;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Channel {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 6, unique = true, nullable = false)
+    private String code;
 
     @Column(nullable = false)
-    private String name; // 頻道名稱
+    private String name;
 
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
-    private List<ChannelMembership> members; // 所有成員（含管理員）
+    // 加入成員關聯
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChannelMembership> members;
+
+    // ✅ 新增：頻道的所有訊息
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages;
 }
