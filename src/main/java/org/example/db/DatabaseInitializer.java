@@ -11,55 +11,57 @@ public class DatabaseInitializer {
         String password = "password";
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
-            Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             String usersTable = "CREATE TABLE IF NOT EXISTS users (" +
-                "user_id INT PRIMARY KEY AUTO_INCREMENT," +
-                "username VARCHAR(50) NOT NULL UNIQUE," +
-                // "email VARCHAR(100) UNIQUE," +
-                "password_hash VARCHAR(255) NOT NULL," +
-                ");";
-
-            String groupsTable = "CREATE TABLE IF NOT EXISTS groups (" +
-                "group_id INT PRIMARY KEY AUTO_INCREMENT," +
-                "group_name VARCHAR(100) NOT NULL," +
-                "created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
-                "FOREIGN KEY (created_by_user_id) REFERENCES users(user_id)" +
-                ");";
-
-            String conversationsTable = "CREATE TABLE IF NOT EXISTS conversations (" +
-                "conversation_id INT PRIMARY KEY AUTO_INCREMENT," +
-                "type VARCHAR(20) NOT NULL," +
-                "group_id INT," +
-                "FOREIGN KEY (group_id) REFERENCES groups(group_id)" +
-                ");";
+                    "user_id INT PRIMARY KEY AUTO_INCREMENT," +
+                    "username VARCHAR(50) NOT NULL UNIQUE," +
+                    "ncikname VARCHAR(50) NOT NULL," +
+                    "email VARCHAR(100) UNIQUE," +
+                    "password_hash VARCHAR(255) NOT NULL," +
+                    ");";
 
             String messagesTable = "CREATE TABLE IF NOT EXISTS messages (" +
-                "message_id INT PRIMARY KEY AUTO_INCREMENT," +
-                "conversation_id INT NOT NULL," +
-                "sender_id INT NOT NULL," +
-                "message_text TEXT NOT NULL," +
-                "sent_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
-                "message_type VARCHAR(20) DEFAULT 'text'," +
-                "FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id)," +
-                "FOREIGN KEY (sender_id) REFERENCES users(user_id)" +
-                ");";
+                    "message_id INT PRIMARY KEY AUTO_INCREMENT," +
+                    "conversation_id INT NOT NULL," +
+                    "sender_id INT NOT NULL," +
+                    "message_text TEXT NOT NULL," +
+                    "sent_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "message_type VARCHAR(20) DEFAULT 'text'," +
+                    "FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id)," +
+                    "FOREIGN KEY (sender_id) REFERENCES users(user_id)" +
+                    ");";
 
-            String conversationParticipantsTable = "CREATE TABLE IF NOT EXISTS conversation_participants (" +
-                "participant_id INT PRIMARY KEY AUTO_INCREMENT," +
-                "conversation_id INT NOT NULL," +
-                "user_id INT NOT NULL," +
-                "FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id)," +
-                "FOREIGN KEY (user_id) REFERENCES users(user_id)," +
-                "UNIQUE (conversation_id, user_id)" +
-                ");";
+            String channelsTable = "CREATE TABLE IF NOT EXISTS channels (" +
+                    "channel_id INT PRIMARY KEY AUTO_INCREMENT," +
+                    "name VARCHAR(100) NOT NULL UNIQUE," +
+                    "description TEXT," +
+                    "last_active_time DATETIME DEFAULT CURRENT_TIMESTAMP" +
+                    ");";
 
+            String channelMembershipsTable = "CREATE TABLE IF NOT EXISTS channel_memberships (" +
+                    "membership_id INT PRIMARY KEY AUTO_INCREMENT," +
+                    "channel_id INT NOT NULL," +
+                    "user_id INT NOT NULL," +
+                    "FOREIGN KEY (channel_id) REFERENCES channels(channel_id)," +
+                    "FOREIGN KEY (user_id) REFERENCES users(user_id)," +
+                    "UNIQUE (channel_id, user_id)" +
+                    ");";
+
+            String friendshipsTable = "CREATE TABLE IF NOT EXISTS friendships (" +
+                    "friendship_id INT PRIMARY KEY AUTO_INCREMENT," +
+                    "user1_id INT NOT NULL," +
+                    "user2_id INT NOT NULL," +
+                    "FOREIGN KEY (user1_id) REFERENCES users(user_id)," +
+                    "FOREIGN KEY (user2_id) REFERENCES users(user_id)," +
+                    "UNIQUE (user1_id, user2_id)" +
+                    ");";
 
             stmt.executeUpdate(usersTable);
-            stmt.executeUpdate(groupsTable);
-            stmt.executeUpdate(conversationsTable);
+            stmt.executeUpdate(channelsTable);
             stmt.executeUpdate(messagesTable);
-            stmt.executeUpdate(conversationParticipantsTable);
+            stmt.executeUpdate(channelMembershipsTable);
+            stmt.executeUpdate(friendshipsTable);
 
             System.out.println("Database initialized successfully.");
         } catch (Exception e) {
