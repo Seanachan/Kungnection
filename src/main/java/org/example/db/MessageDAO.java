@@ -16,7 +16,7 @@ public class MessageDAO {
 	}
 
 	public void save(ChatMessage msg) throws SQLException {
-		String sql = "INSERT INTO messagesTable (conversation_id, sender_id, message_text, sent_at, message_type)"
+		String sql = "INSERT INTO messages (conversation_id, sender_id, message_text, sent_at, message_type)"
 				+ " VALUES (?, ?, ?, ?, ?)";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -36,7 +36,7 @@ public class MessageDAO {
 
 	public List<ChatMessage> findMessagesByConversationId(int conversationId) throws SQLException {
 		List<ChatMessage> list = new ArrayList<>();
-		String sql = "SELECT conversation_id, sender_id, message_text, sent_at, message_type FROM messagesTable WHERE conversation_id = ? ORDER BY sent_at ASC";
+		String sql = "SELECT conversation_id, sender_id, message_text, sent_at, message_type FROM messages WHERE conversation_id = ? ORDER BY sent_at ASC";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, conversationId);

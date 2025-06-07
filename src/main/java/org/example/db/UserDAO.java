@@ -14,7 +14,7 @@ public class UserDAO {
 
     // TODO: table name change
     public void save(User user) throws SQLException {
-        String sql = "INSERT INTO usersTable (username, nickname, email, password_hash) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, nickname, email, password_hash) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
@@ -31,7 +31,7 @@ public class UserDAO {
     }
 
     public User findByUsername(String username) throws SQLException {
-        String sql = "SELECT user_id, username, email, password_hash FROM usersTable WHERE username = ?";
+        String sql = "SELECT user_id, username, email, password_hash FROM users WHERE username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (var rs = ps.executeQuery()) {
@@ -49,7 +49,7 @@ public class UserDAO {
     }
 
     public User findById(int userId) throws SQLException {
-        String sql = "SELECT user_id, username, nickname, email, password_hash FROM usersTable WHERE user_id = ?";
+        String sql = "SELECT user_id, username, nickname, email, password_hash FROM users WHERE user_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (var rs = ps.executeQuery()) {
