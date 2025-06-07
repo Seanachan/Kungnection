@@ -14,7 +14,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 使用者唯一識別碼
+    private int id; 
 
     @Column(unique = true, nullable = false)
     private String username; // 顯示名稱用帳號（非登入用）
@@ -32,4 +32,16 @@ public class User {
 
     @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friendship> friends;
+
+    public User(int id, String username, String nickname, String email, String password) {
+        this.id = id;
+        this.username = username;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+    }
+
+    public  String getPasswordHash() {
+        return password; 
+    }
 }

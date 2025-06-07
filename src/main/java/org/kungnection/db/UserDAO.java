@@ -38,6 +38,7 @@ public class UserDAO {
                     return new User(
                             rs.getInt("user_id"),
                             rs.getString("username"),
+                            rs.getString("nickname"),
                             rs.getString("email"),
                             rs.getString("password_hash"));
                 } else {
