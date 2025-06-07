@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
 
-import org.kungnection.model.Message;
+//import org.kungnection.model.Message;
 
 @Entity
 @Data

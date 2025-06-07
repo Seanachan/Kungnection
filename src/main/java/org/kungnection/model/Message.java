@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-import org.kungnection.model.User;
-import org.kungnection.model.Channel;
-import org.kungnection.model.FriendChatRoom;
+// import org.kungnection.model.User;
+// import org.kungnection.model.Channel;
+// import org.kungnection.model.FriendChatRoom;
 
 @Entity
 @Data
