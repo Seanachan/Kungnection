@@ -1,5 +1,4 @@
-// should be removed when the file is moved to the correct package
-package org.example.db;
+package org.kungnection.db;
 
 public class ChatMessage {
   private int id;

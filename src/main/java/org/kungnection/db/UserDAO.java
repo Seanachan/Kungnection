@@ -1,6 +1,6 @@
-package org.example.db;
+package org.kungnection.db;
 
-import org.example.model.User;
+import org.kungnection.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,7 +12,6 @@ public class UserDAO {
         this.conn = conn;
     }
 
-    // TODO: table name change
     public void save(User user) throws SQLException {
         String sql = "INSERT INTO users (username, nickname, email, password_hash) VALUES (?, ?, ?, ?)";
 

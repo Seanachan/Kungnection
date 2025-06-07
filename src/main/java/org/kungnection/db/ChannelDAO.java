@@ -1,6 +1,6 @@
-package org.example.db;
+package org.kungnection.db;
 
-import org.example.db.model.Channel;
+import org.kungnection.model.Channel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

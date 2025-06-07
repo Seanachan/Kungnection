@@ -1,10 +1,12 @@
-package org.example.db;
+package org.kungnection.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.example.db.model.ChannelMembership;
+import java.util.List;
+
+import org.kungnection.model.ChannelMembership;
 
 public class ChannelMembershipDAO {
     private final Connection conn;

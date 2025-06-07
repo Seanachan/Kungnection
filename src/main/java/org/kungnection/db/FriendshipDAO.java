@@ -1,7 +1,6 @@
+package org.kungnection.db;
 
-package org.example.db;
-
-import org.example.db.model.Friendship;
+import org.kungnection.model.Friendship;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
