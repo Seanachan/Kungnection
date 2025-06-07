@@ -38,6 +38,9 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
 
     implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("mysql:mysql-connector-java:8.0.33")
 }
 
 tasks.test {
