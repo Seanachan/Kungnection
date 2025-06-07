@@ -1,5 +1,6 @@
 package org.kungnection.db;
 
+import org.kungnection.model.Message;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +16,7 @@ public class MessageDAO {
 		this.conn = conn;
 	}
 
-	public void save(ChatMessage msg) throws SQLException {
+	public void save(Message msg) throws SQLException {
 		String sql = "INSERT INTO messages (conversation_id, sender_id, message_text, sent_at, message_type)"
 				+ " VALUES (?, ?, ?, ?, ?)";
 
@@ -34,8 +35,8 @@ public class MessageDAO {
 		}
 	}
 
-	public List<ChatMessage> findMessagesByConversationId(int conversationId) throws SQLException {
-		List<ChatMessage> list = new ArrayList<>();
+	public List<Message> findMessagesByConversationId(int conversationId) throws SQLException {
+		List<Message> list = new ArrayList<>();
 		String sql = "SELECT conversation_id, sender_id, message_text, sent_at, message_type FROM messages WHERE conversation_id = ? ORDER BY sent_at ASC";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -50,7 +51,7 @@ public class MessageDAO {
 					long timestamp = rs.getTimestamp("sent_at").getTime();
 					String messageType = rs.getString("message_type");
 
-					ChatMessage msg = new ChatMessage(id, senderId, convId, messageText, timestamp, messageType);
+					Message msg = new Message(id, senderId, convId, messageText, timestamp, messageType);
 					list.add(msg);
 				}
 			}
