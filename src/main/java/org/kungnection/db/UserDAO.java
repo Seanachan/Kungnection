@@ -7,6 +7,14 @@ import java.sql.SQLException;
 
 public class UserDAO {
     private final Connection conn;
+    // @Override
+    // public PreparedStatement prepareStatement(String sql) throws SQLException {
+    // // This is a placeholder for the actual connection logic.
+    // // In a real application, you would return a PreparedStatement from an actual
+    // database connection.
+    // throw new UnsupportedOperationException("Not implemented yet");
+    // }
+    // };
 
     public UserDAO(Connection conn) {
         this.conn = conn;
