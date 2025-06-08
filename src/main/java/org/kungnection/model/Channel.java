@@ -13,8 +13,8 @@ import java.util.List;
 public class Channel {
 
     @Id
-    @Column(length = 6, unique = true, nullable = false)
-    private String code;
+    @Column(unique = true, nullable = false)
+    private int code;
 
     @Column(nullable = false)
     private String name;
@@ -23,7 +23,30 @@ public class Channel {
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChannelMembership> members;
 
-    // ✅ 新增：頻道的所有訊息
+    // 新增：頻道的所有訊息
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
+
+    public Channel(int code, String name, String description, long lastActiveTime) {
+        this.code = code;
+        this.name = name;
+    }
+
+    public int getChannelId() {
+        return code;
+    }
+
+    public String getChannelName() {
+        return name;
+    }
+
+    public String getChannelDescription() {
+        return "Channel: " + name + " (Code: " + code + ")";
+    }
+
+    public long getLastActiveTime() {
+        // TODO
+        // return lastActiveTime;
+        return 0;
+    }
 }
