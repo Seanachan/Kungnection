@@ -82,4 +82,26 @@ public class ChannelDAO {
         return channels;
     }
 
+    public Channel findById(int channelId) throws SQLException {
+        String sql = "SELECT channel_id, channel_name, channel_description FROM channels WHERE channel_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, channelId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("channel_id");
+                    String name = rs.getString("channel_name");
+                    String description = rs.getString("channel_description");
+                    long lastActiveTime = rs.getTimestamp("last_active_time").getTime();
+
+                    return new Channel(id, name, description, lastActiveTime);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("error: finding channel by ID " + e.getMessage());
+            throw e;
+        }
+    }
+
 }
