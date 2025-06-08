@@ -2,13 +2,12 @@ package org.kungnection.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.kungnection.db.*;
 import org.kungnection.dto.MessageDTO;
 import org.kungnection.model.*;
 import org.kungnection.repository.FriendChatRoomDAO;
 import org.kungnection.repository.MessageDAO;
 import org.kungnection.repository.UserDAO;
-// import org.kungnection.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
@@ -18,13 +17,12 @@ import java.util.List;
 @RequestMapping("/messages")
 public class MessageController {
 
-        // private final MessageRepository messageRepository;
-        // private final FriendChatRoomRepository friendChatRoomRepository;
-        // private final UserRepository userRepository;
-
-        private final MessageDAO messageDAO = new MessageDAO();
-        private final FriendChatRoomDAO friendChatRoomDAO = new FriendChatRoomDAO();
-        private final UserDAO userDAO = new UserDAO();
+        @Autowired
+        private MessageDAO messageDAO;
+        @Autowired
+        private FriendChatRoomDAO friendChatRoomDAO;
+        @Autowired
+        private UserDAO userDAO;
 
         private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
