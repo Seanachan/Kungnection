@@ -51,7 +51,7 @@ public class UserService {
     public Channel createChannel(User user, String name) {
         Channel channel = new Channel();
         channel.setName(name);
-        channel.setCode(generateUniqueCode());
+        channel.setCode(generateUniqueChannelCode());
         channelRepository.save(channel);
 
         ChannelMembership membership = new ChannelMembership();
@@ -65,12 +65,14 @@ public class UserService {
     @Transactional
     public boolean joinChannel(User user, String code) {
         Optional<Channel> optional = channelRepository.findById(code);
-        if (optional.isEmpty()) return false;
+        if (optional.isEmpty())
+            return false;
 
         Channel channel = optional.get();
 
         boolean exists = channelMembershipRepository.existsByUserAndChannel(user, channel);
-        if (exists) return false;
+        if (exists)
+            return false;
 
         ChannelMembership membership = new ChannelMembership();
         membership.setUser(user);
@@ -102,10 +104,12 @@ public class UserService {
 
     @Transactional
     public boolean addFriend(User user, User target) {
-        if (user.equals(target)) return false;
+        if (user.equals(target))
+            return false;
 
         boolean already = friendshipRepository.existsByUsers(user.getId(), target.getId());
-        if (already) return false;
+        if (already)
+            return false;
 
         Friendship f1 = new Friendship();
         f1.setUser1(user);
@@ -127,7 +131,7 @@ public class UserService {
     }
 
     public List<Friendship> getFriends(User user) {
-        return friendshipRepository.findAllByUser1(user);
+        return friendshipRepository.findAllByUser(user);
     }
 
     private String generateUniqueCode() {
@@ -141,6 +145,19 @@ public class UserService {
             code = sb.toString();
         } while (channelRepository.existsById(code));
         return code;
+    }
+
+    private int generateUniqueChannelCode() {
+        String code;
+        Random random = new Random();
+        do {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < CODE_LENGTH; i++) {
+                sb.append(CODE_CHARACTERS.charAt(random.nextInt(CODE_CHARACTERS.length())));
+            }
+            code = sb.toString();
+        } while (channelRepository.existsById(code));
+        return Integer.parseInt(code, 36); // 將字串轉為整數
     }
 
     public List<FriendChatRoom> getFriendChatRooms(User user) {
