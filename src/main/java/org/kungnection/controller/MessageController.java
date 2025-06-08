@@ -62,8 +62,6 @@ public class MessageController {
                         HttpServletRequest request,
                         @PathVariable int roomId) {
 
-                int userId = (int) request.getAttribute("userId");
-
                 FriendChatRoom room = friendChatRoomDAO.findByRoomId(roomId);
 
                 try {
