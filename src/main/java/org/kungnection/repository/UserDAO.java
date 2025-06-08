@@ -3,7 +3,9 @@ package org.kungnection.repository;
 import org.kungnection.model.User;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserDAO {
     private final DataSource dataSource;
 

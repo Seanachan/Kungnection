@@ -6,7 +6,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class MessageDAO {
 	private final DataSource dataSource;
 

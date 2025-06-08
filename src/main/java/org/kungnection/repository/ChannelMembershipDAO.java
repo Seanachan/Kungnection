@@ -10,7 +10,9 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.kungnection.model.ChannelMembership;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ChannelMembershipDAO {
     private final DataSource dataSource;
 
