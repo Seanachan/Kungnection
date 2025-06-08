@@ -30,7 +30,7 @@ public class ChannelMembership {
     private Channel channel; // 所屬頻道
 
     public ChannelMembership(int userId, int channelId) throws SQLException {
-        UserDAO userDAO = new UserDAO(null);
+        UserDAO userDAO = new UserDAO();
         user = userDAO.findById(userId);
         if (user == null) {
             throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
@@ -47,6 +47,6 @@ public class ChannelMembership {
     }
 
     public int getChannelId() {
-        return channel != null ? channel.getCode() : 0; // 或拋出異常
+        return channel != null ? channel.getId() : 0; // 或拋出異常
     }
 }

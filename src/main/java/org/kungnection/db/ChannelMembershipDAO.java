@@ -50,7 +50,7 @@ public class ChannelMembershipDAO {
         }
     }
 
-    public List<ChannelMembership> findByUserId(int userId) throws SQLException {
+    public List<ChannelMembership> findAllByUserId(int userId) throws SQLException {
         List<ChannelMembership> memberships = new ArrayList<>();
         String sql = "SELECT user_id, channel_id FROM channel_memberships WHERE user_id = ?";
 
@@ -71,7 +71,7 @@ public class ChannelMembershipDAO {
         return memberships;
     }
 
-    public List<ChannelMembership> findByChannelId(int channelId) throws SQLException {
+    public List<ChannelMembership> findAllByChannelId(int channelId) throws SQLException {
         List<ChannelMembership> memberships = new ArrayList<>();
         String sql = "SELECT user_id, channel_id FROM channel_memberships WHERE channel_id = ?";
 
@@ -90,5 +90,24 @@ public class ChannelMembershipDAO {
             throw e;
         }
         return memberships;
+    }
+
+    public boolean existsByUserAndChannel(int userId, int channelId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM channel_memberships WHERE user_id = ? AND channel_id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, channelId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("error: existsByUserAndChannel" + e.getMessage());
+            throw e;
+        }
+        return false;
     }
 }
