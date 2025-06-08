@@ -39,11 +39,13 @@ public class ChannelDAO {
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int channelId = rs.getInt("channel_id");
+                String channelCode = rs.getString("channel_code");
                 String channelName = rs.getString("channel_name");
                 String channelDescription = rs.getString("channel_description");
                 long last_active_time = rs.getTimestamp("sent_at").getTime();
 
-                Channel channel = new Channel(channelId, channelName, channelDescription, last_active_time);
+                Channel channel = new Channel(channelId, channelCode, channelName, channelDescription,
+                        last_active_time);
                 channels.add(channel);
             }
         } catch (SQLException e) {
@@ -65,11 +67,13 @@ public class ChannelDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int channelId = rs.getInt("channel_id");
+                    String channelCode = rs.getString("code");
                     String channelName = rs.getString("name");
                     String channelDescription = rs.getString("description");
                     long lastActiveTime = rs.getTimestamp("last_active_time").getTime();
 
-                    Channel channel = new Channel(channelId, channelName, channelDescription, lastActiveTime);
+                    Channel channel = new Channel(channelId, channelCode, channelName, channelDescription,
+                            lastActiveTime);
                     channels.add(channel);
                 }
             }
@@ -89,11 +93,12 @@ public class ChannelDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("channel_id");
+                    String code = rs.getString("channel_code");
                     String name = rs.getString("channel_name");
                     String description = rs.getString("channel_description");
                     long lastActiveTime = rs.getTimestamp("last_active_time").getTime();
 
-                    return new Channel(id, name, description, lastActiveTime);
+                    return new Channel(id, code, name, description, lastActiveTime);
                 } else {
                     return null;
                 }
@@ -104,4 +109,41 @@ public class ChannelDAO {
         }
     }
 
+    public Channel findByCode(String code) throws SQLException {
+        String sql = "SELECT channel_id, channel_name, channel_description FROM channels WHERE channel_code = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, code);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("channel_id");
+                    String name = rs.getString("channel_name");
+                    String description = rs.getString("channel_description");
+                    long lastActiveTime = rs.getTimestamp("last_active_time").getTime();
+
+                    return new Channel(id, code, name, description, lastActiveTime);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("error: finding channel by code " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public boolean existsByCode(String code) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM channels WHERE channel_code = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, code);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("error: checking if channel exists by code " + e.getMessage());
+            throw e;
+        }
+        return false;
+    }
 }

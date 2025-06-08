@@ -12,9 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 public class Channel {
 
-    @Id
     @Column(unique = true, nullable = false)
-    private int code;
+    private String code;
+
+    private int id;
 
     @Column(nullable = false)
     private String name;
@@ -27,13 +28,14 @@ public class Channel {
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
 
-    public Channel(int code, String name, String description, long lastActiveTime) {
+    public Channel(int id, String code, String name, String description, long lastActiveTime) {
+        this.id = id;
         this.code = code;
         this.name = name;
     }
 
     public int getChannelId() {
-        return code;
+        return id;
     }
 
     public String getChannelName() {
