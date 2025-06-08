@@ -18,4 +18,29 @@ public class Friendship {
 
     @ManyToOne
     private User user2;
+
+    public Friendship(User user1, User user2) {
+        this.user1 = user1;
+        this.user2 = user2;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getUser1Id() {
+        return user1.getId();
+    }
+
+    public int getUser2Id() {
+        return user2.getId();
+    }
+
+    public String getStatus() {
+        // Assuming status is determined by the relationship between user1 and user2
+        if (user1 != null && user2 != null) {
+            return "Friends";
+        }
+        return "Not Friends";
+    }
 }
