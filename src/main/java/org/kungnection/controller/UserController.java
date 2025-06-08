@@ -1,9 +1,9 @@
 package org.kungnection.controller;
 
+import org.kungnection.db.UserDAO;
 import org.kungnection.model.*;
-import org.kungnection.repository.UserRepository;
+// import org.kungnection.repository.UserRepository;
 import org.kungnection.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,32 +13,33 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+    private final UserService userService = new UserService();
+    // private final UserRepository userRepository;
+    private final UserDAO userDAO = new UserDAO();
 
     // 🔧 工具方法：依 ID 取出 User 實體（簡化重複程式碼）
-    private User getUserOrThrow(Long id) {
-        return userRepository.findById(id).orElseThrow(() ->
-            new IllegalArgumentException("User not found: id = " + id));
+    private User getUserOrThrow(int id) {
+        try {
+            return userDAO.findById(id);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException("Database error while fetching user by id: " + id, e);
+        }
     }
 
     // ✅ 創立頻道
     @PostMapping("/channels")
     public Channel createChannel(HttpServletRequest request, @RequestBody String channelName) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        int userId = (int) request.getAttribute("userId");
+        User user = getUserOrThrow(userId);
         return userService.createChannel(user, channelName);
     }
 
     // ✅ 加入頻道（用六碼代碼）
     @PostMapping("/channels/join")
     public String joinChannel(HttpServletRequest request, @RequestParam String code) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
+        int userId = (int) request.getAttribute("userId");
         System.out.println("✅ token userId = " + userId + ", code = " + code);
         User user = getUserOrThrow(userId);
         return userService.joinChannel(user, code) ? "Joined successfully." : "Join failed.";
@@ -46,7 +47,7 @@ public class UserController {
 
     // ✅ 加好友
     @PostMapping("/friends")
-    public String addFriend(@RequestParam Long userId, @RequestParam Long friendId) {
+    public String addFriend(@RequestParam int userId, @RequestParam int friendId) {
         User user = getUserOrThrow(userId);
         User friend = getUserOrThrow(friendId);
         return userService.addFriend(user, friend) ? "Friend added." : "Add failed.";
@@ -56,14 +57,13 @@ public class UserController {
     public String addFriendByUsername(HttpServletRequest request, @RequestParam String username) {
         System.out.println("🚨 Controller 中取得的 userId = " + request.getAttribute("userId"));
         try {
-            Long userId = (Long) request.getAttribute("userId");
-            if (userId == null) throw new RuntimeException("User not authenticated.");
+            int userId = (int) request.getAttribute("userId");
 
             System.out.println("🔍 登入者 userId: " + userId);
             System.out.println("🔍 欲加好友 username: " + username);
 
             User currentUser = getUserOrThrow(userId);
-            User friend = userRepository.findByUsername(username);
+            User friend = userDAO.findByUsername(username);
 
             System.out.println("✅ friend: " + (friend != null ? friend.getId() : "找不到"));
 
@@ -81,21 +81,21 @@ public class UserController {
             return success ? "Friend added." : "Already friends.";
 
         } catch (Exception e) {
-            e.printStackTrace();  // ✅ 印出完整錯誤訊息
+            e.printStackTrace(); // ✅ 印出完整錯誤訊息
             return "Internal error: " + e.getMessage();
         }
     }
 
     // ✅ 顯示好友清單
     @GetMapping("/friends")
-    public List<Friendship> getFriends(@RequestParam Long userId) {
+    public List<Friendship> getFriends(@RequestParam int userId) {
         User user = getUserOrThrow(userId);
         return userService.getFriends(user);
     }
 
     // ✅ 顯示使用者所屬的頻道清單
     @GetMapping("/channels")
-    public List<ChannelMembership> getChannels(@RequestParam Long userId) {
+    public List<ChannelMembership> getChannels(@RequestParam int userId) {
         User user = getUserOrThrow(userId);
         return userService.getChannels(user);
     }
@@ -104,36 +104,33 @@ public class UserController {
     @GetMapping("/channel/members")
     public List<User> getChannelMembers(HttpServletRequest request, @RequestParam String code) {
         Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated."); // 沒帶 token 或無效 token
+        if (userId == null)
+            throw new RuntimeException("User not authenticated."); // 沒帶 token 或無效 token
         return userService.getUsersInChannel(code);
     }
 
     @GetMapping("/sidebar")
     public Map<String, Object> getSidebar(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
+        int userId = (int) request.getAttribute("userId");
 
         User user = getUserOrThrow(userId);
 
         // 🔹 Friend Rooms
         List<Map<String, Object>> friends = userService.getFriendChatRooms(user).stream()
-        .map(room -> Map.<String, Object>of(
-            "id", room.getId(),
-            "name", room.getDisplayNameFor(user)
-        ))
-        .toList();
+                .map(room -> Map.<String, Object>of(
+                        "id", room.getId(),
+                        "name", room.getDisplayNameFor(user)))
+                .toList();
 
         // 🔹 Channels
         List<Map<String, Object>> channels = userService.getChannels(user).stream()
-        .map(cm -> Map.<String, Object>of(
-            "code", cm.getChannel().getCode(),
-            "name", cm.getChannel().getName()
-        ))
-        .toList();
+                .map(cm -> Map.<String, Object>of(
+                        "code", cm.getChannel().getCode(),
+                        "name", cm.getChannel().getName()))
+                .toList();
 
         return Map.of(
-            "friends", friends,
-            "channels", channels
-        );
+                "friends", friends,
+                "channels", channels);
     }
 }
