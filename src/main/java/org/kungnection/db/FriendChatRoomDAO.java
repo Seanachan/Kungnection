@@ -29,6 +29,37 @@ public class FriendChatRoomDAO {
         save(chatRoom.getUser1Id(), chatRoom.getUser2Id());
     }
 
+    public FriendChatRoom findById(int userId, int friendId) {
+        String sql = "SELECT * FROM friend_chat_rooms WHERE user_id = ? AND friend_id = ?";
+        try (var ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, friendId);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new FriendChatRoom(userId, friendId);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error finding friend chat room: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public FriendChatRoom findByRoomId(int roomId) {
+        String sql = "SELECT user_id, friend_id FROM friend_chat_rooms WHERE room_id = ?";
+        try (var ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new FriendChatRoom(rs.getInt("user_id"), rs.getInt("friend_id"));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error finding friend chat room by room ID: " + e.getMessage());
+        }
+        return null;
+    }
+
     public void delete(int userId, int friendId) {
         String sql = "DELETE FROM friend_chat_rooms WHERE user_id = ? AND friend_id = ?";
         try (var ps = conn.prepareStatement(sql)) {
