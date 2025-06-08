@@ -16,8 +16,8 @@ public class FriendshipDAO {
         String sql = "INSERT INTO friendships (user_id, friend_id, status) VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, friendship.getUserId());
-            ps.setInt(2, friendship.getFriendId());
+            ps.setInt(1, friendship.getUser1Id());
+            ps.setInt(2, friendship.getUser2Id());
             ps.setString(3, friendship.getStatus());
 
             ps.executeUpdate();
