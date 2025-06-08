@@ -9,11 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendshipDAO {
-    private final Connection conn;
-
-    public FriendshipDAO(Connection conn) {
-        this.conn = conn;
-    }
+    private final static Connection conn = DatabaseUtil.getConnection();
 
     public void save(Friendship friendship) throws SQLException {
         String sql = "INSERT INTO friendships (user_id, friend_id, status) VALUES (?, ?, ?)";

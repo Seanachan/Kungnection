@@ -9,11 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelDAO {
-    private final Connection conn;
-
-    public ChannelDAO(Connection conn) {
-        this.conn = conn;
-    }
+    private final static Connection conn = DatabaseUtil.getConnection();
 
     public void save(Channel channel) throws SQLException {
         String sql = "INSERT INTO channels (channel_id, channel_name, channel_description) VALUES (?, ?, ?)";

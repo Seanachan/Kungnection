@@ -35,7 +35,7 @@ public class ChannelMembership {
         if (user == null) {
             throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
         }
-        ChannelDAO channelDAO = new ChannelDAO(null);
+        ChannelDAO channelDAO = new ChannelDAO();
         channel = channelDAO.findById(channelId);
         if (channel == null) {
             throw new IllegalArgumentException("Channel with ID " + channelId + " does not exist.");

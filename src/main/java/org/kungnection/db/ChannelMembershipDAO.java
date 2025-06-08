@@ -10,11 +10,7 @@ import java.util.List;
 import org.kungnection.model.ChannelMembership;
 
 public class ChannelMembershipDAO {
-    private final Connection conn;
-
-    public ChannelMembershipDAO(Connection conn) {
-        this.conn = conn;
-    }
+    private final static Connection conn = DatabaseUtil.getConnection();
 
     public void save(ChannelMembership membership) throws SQLException {
         String sql = "INSERT INTO channel_memberships (user_id, channel_id) VALUES (?, ?)";
