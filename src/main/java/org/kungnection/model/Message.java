@@ -16,7 +16,7 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @ManyToOne
     private User sender;
@@ -30,5 +30,45 @@ public class Message {
     private FriendChatRoom friendRoom;
 
     @ManyToOne
-    private Channel channel; // 可以先留著，未來實作頻道訊息用
+    private Channel channel;
+
+    public Message(int id, int senderID, int convId, String messageText, long timestamp, String messageType) {
+        // this.sender = sender;
+        // this.timestamp = timestamp;
+        this.id = id;
+        this.timestamp = LocalDateTime.ofEpochSecond(timestamp / 1000, 0, java.time.ZoneOffset.UTC);
+        this.content = messageText;
+        this.friendRoom = null; // or set based on messageType if needed
+        this.channel = null; // or set based on messageType if needed
+    }
+
+    public int getConversationId() {
+        if (friendRoom != null) {
+            return friendRoom.getId().intValue();
+        } else if (channel != null) {
+            return channel.getCode();
+        }
+        return 0; // or throw an exception if neither is set
+    }
+
+    public int getSenderId() {
+        return sender != null ? sender.getId() : 0; // or throw an exception if sender is null
+    }
+
+    public String getMessageText() {
+        return content != null ? content : "";
+    }
+
+    public long getTimestamp() {
+        return timestamp != null ? timestamp.toInstant(java.time.ZoneOffset.UTC).toEpochMilli() : 0L;
+    }
+
+    public String getMessageType() {
+        if (friendRoom != null) {
+            return "FRIEND_CHAT";
+        } else if (channel != null) {
+            return "CHANNEL_CHAT";
+        }
+        return "UNKNOWN";
+    }
 }
