@@ -2,7 +2,6 @@ package org.kungnection.controller;
 
 import org.kungnection.model.*;
 import org.kungnection.repository.UserDAO;
-// import org.kungnection.repository.UserRepository;
 import org.kungnection.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,14 +9,16 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService = new UserService();
-    // private final UserRepository userRepository;
-    private final UserDAO userDAO = new UserDAO();
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserDAO userDAO;
 
     // 🔧 工具方法：依 ID 取出 User 實體（簡化重複程式碼）
     private User getUserOrThrow(int id) {
