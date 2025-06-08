@@ -1,6 +1,5 @@
 package org.kungnection.repository;
 
-import org.kungnection.db.DatabaseUtil;
 import org.kungnection.model.Friendship;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,18 +7,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 
 public class FriendshipDAO {
-    private final static Connection conn = DatabaseUtil.getConnection();
+    private final DataSource dataSource;
+
+    public FriendshipDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public void save(Friendship friendship) throws SQLException {
         String sql = "INSERT INTO friendships (user_id, friend_id, status) VALUES (?, ?, ?)";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, friendship.getUser1Id());
             ps.setInt(2, friendship.getUser2Id());
             ps.setString(3, friendship.getStatus());
-
             ps.executeUpdate();
             System.out.println("Friendship saved: " + friendship);
         } catch (SQLException e) {
@@ -30,12 +33,11 @@ public class FriendshipDAO {
 
     public void updateStatus(int userId, int friendId, String status) throws SQLException {
         String sql = "UPDATE friendships SET status = ? WHERE user_id = ? AND friend_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, userId);
             ps.setInt(3, friendId);
-
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Friendship status updated: " + userId + " - " + friendId + " to " + status);
@@ -50,11 +52,10 @@ public class FriendshipDAO {
 
     public void delete(int userId, int friendId) throws SQLException {
         String sql = "DELETE FROM friendships WHERE user_id = ? AND friend_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
-
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Friendship deleted: " + userId + " - " + friendId);
@@ -69,12 +70,11 @@ public class FriendshipDAO {
 
     public boolean exists(int userId, int friendId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM friendships WHERE user_id = ? AND friend_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
-
-            try (var rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
@@ -89,10 +89,9 @@ public class FriendshipDAO {
     public List<Friendship> findAllByUserId(int userId) throws SQLException {
         List<Friendship> friendships = new ArrayList<>();
         String sql = "SELECT user_id, friend_id, status FROM friendships WHERE user_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int friendId = rs.getInt("friend_id");
