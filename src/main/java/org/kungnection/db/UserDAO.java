@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UserDAO {
-    private final Connection conn;
+    private static final Connection conn = DatabaseUtil.getConnection();
     // @Override
     // public PreparedStatement prepareStatement(String sql) throws SQLException {
     // // This is a placeholder for the actual connection logic.
@@ -16,11 +16,11 @@ public class UserDAO {
     // }
     // };
 
-    public UserDAO(Connection conn) {
-        this.conn = conn;
+    public UserDAO() {
+        // Constructor can be used to initialize resources if needed
     }
 
-    public void save(User user) throws SQLException {
+    public User save(User user) {
         String sql = "INSERT INTO users (username, nickname, email, password_hash) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -33,14 +33,34 @@ public class UserDAO {
             System.out.println("User saved: " + user);
         } catch (SQLException e) {
             System.err.println("error: save" + e.getMessage());
-            throw e;
         }
+        // TODO
+        return user;
     }
 
     public User findByUsername(String username) throws SQLException {
         String sql = "SELECT user_id, username, email, password_hash FROM users WHERE username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("nickname"),
+                            rs.getString("email"),
+                            rs.getString("password_hash"));
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public User findByEmail(String email) throws SQLException {
+        String sql = "SELECT user_id, username, nickname, email, password_hash FROM users WHERE email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new User(
