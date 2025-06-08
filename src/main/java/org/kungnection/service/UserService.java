@@ -29,6 +29,7 @@ public class UserService {
     private FriendChatRoomRepository friendChatRoomRepository;
 
     private static final String CODE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final String CODE_CHARACTERS_NUMBER = "0123456789";
     private static final int CODE_LENGTH = 6;
 
     // -------------------- 基本帳號功能 --------------------
@@ -153,11 +154,11 @@ public class UserService {
         do {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < CODE_LENGTH; i++) {
-                sb.append(CODE_CHARACTERS.charAt(random.nextInt(CODE_CHARACTERS.length())));
+                sb.append(CODE_CHARACTERS_NUMBER.charAt(random.nextInt(CODE_CHARACTERS_NUMBER.length())));
             }
             code = sb.toString();
         } while (channelRepository.existsById(code));
-        return Integer.parseInt(code, 36); // 將字串轉為整數
+        return Integer.parseInt(code, 10); // 將字串轉為整數
     }
 
     public List<FriendChatRoom> getFriendChatRooms(User user) {
