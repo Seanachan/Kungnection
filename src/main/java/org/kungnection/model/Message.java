@@ -44,9 +44,9 @@ public class Message {
 
     public int getConversationId() {
         if (friendRoom != null) {
-            return friendRoom.getId().intValue();
+            return friendRoom.getId();
         } else if (channel != null) {
-            return channel.getCode();
+            return channel.getId();
         }
         return 0; // or throw an exception if neither is set
     }
