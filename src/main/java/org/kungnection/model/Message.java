@@ -63,6 +63,10 @@ public class Message {
         return timestamp != null ? timestamp.toInstant(java.time.ZoneOffset.UTC).toEpochMilli() : 0L;
     }
 
+    public LocalDateTime getTimestampAsLocalDateTime() {
+        return timestamp;
+    }
+
     public String getMessageType() {
         if (friendRoom != null) {
             return "FRIEND_CHAT";
