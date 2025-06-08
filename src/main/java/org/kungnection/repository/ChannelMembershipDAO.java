@@ -1,4 +1,4 @@
-package org.kungnection.db;
+package org.kungnection.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kungnection.db.DatabaseUtil;
 import org.kungnection.model.ChannelMembership;
 
 public class ChannelMembershipDAO {

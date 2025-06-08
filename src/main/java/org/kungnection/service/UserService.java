@@ -2,6 +2,11 @@ package org.kungnection.service;
 
 import org.kungnection.db.*;
 import org.kungnection.model.*;
+import org.kungnection.repository.ChannelDAO;
+import org.kungnection.repository.ChannelMembershipDAO;
+import org.kungnection.repository.FriendChatRoomDAO;
+import org.kungnection.repository.FriendshipDAO;
+import org.kungnection.repository.UserDAO;
 // import org.kungnection.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

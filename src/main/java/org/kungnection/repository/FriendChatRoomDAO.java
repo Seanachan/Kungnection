@@ -1,9 +1,10 @@
-package org.kungnection.db;
+package org.kungnection.repository;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kungnection.db.DatabaseUtil;
 import org.kungnection.model.FriendChatRoom;
 
 public class FriendChatRoomDAO {

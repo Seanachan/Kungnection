@@ -5,6 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.kungnection.db.*;
 import org.kungnection.dto.MessageDTO;
 import org.kungnection.model.*;
+import org.kungnection.repository.FriendChatRoomDAO;
+import org.kungnection.repository.MessageDAO;
+import org.kungnection.repository.UserDAO;
 // import org.kungnection.repository.*;
 import org.springframework.web.bind.annotation.*;
 

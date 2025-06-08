@@ -1,7 +1,7 @@
 package org.kungnection.controller;
 
-import org.kungnection.db.UserDAO;
 import org.kungnection.model.*;
+import org.kungnection.repository.UserDAO;
 // import org.kungnection.repository.UserRepository;
 import org.kungnection.service.UserService;
 import org.springframework.web.bind.annotation.*;

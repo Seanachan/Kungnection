@@ -1,5 +1,6 @@
-package org.kungnection.db;
+package org.kungnection.repository;
 
+import org.kungnection.db.DatabaseUtil;
 import org.kungnection.model.Message;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
