@@ -19,6 +19,10 @@ import java.util.List;
 
 public class FriendshipRepository {
 
+    public FriendshipRepository() {
+        // Constructor logic if needed
+    }
+
     public Friendship save(User user1, User user2) {
         Friendship friendship = new Friendship(user1, user2);
         return friendship;
