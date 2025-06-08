@@ -2,11 +2,6 @@ package org.kungnection.model;
 
 import lombok.*;
 
-import java.sql.SQLException;
-
-import org.kungnection.db.UserDAO;
-import org.kungnection.db.ChannelDAO;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
@@ -16,29 +11,24 @@ public class ChannelMembership {
     private Long id;
 
     @JsonIgnore
-    private User user; // 所屬使用者
+    private User user;
 
     @JsonIgnore
-    private Channel channel; // 所屬頻道
+    private Channel channel;
 
-    public ChannelMembership(int userId, int channelId) throws SQLException {
-        UserDAO userDAO = new UserDAO();
-        user = userDAO.findById(userId);
-        if (user == null) {
-            throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
-        }
-        ChannelDAO channelDAO = new ChannelDAO();
-        channel = channelDAO.findById(channelId);
-        if (channel == null) {
-            throw new IllegalArgumentException("Channel with ID " + channelId + " does not exist.");
-        }
+    // Constructor for use with JDBC DAOs (no DB access here)
+    public ChannelMembership(int userId, int channelId) {
+        this.user = new User();
+        this.user.setId(userId);
+        this.channel = new Channel();
+        this.channel.setId(channelId);
     }
 
     public int getUserId() {
-        return user != null ? user.getId() : 0; // 或拋出異常
+        return user != null ? user.getId() : 0;
     }
 
     public int getChannelId() {
-        return channel != null ? channel.getId() : 0; // 或拋出異常
+        return channel != null ? channel.getId() : 0;
     }
 }

@@ -1,7 +1,5 @@
 package org.kungnection.model;
 
-import org.kungnection.db.UserDAO;
-
 import lombok.*;
 
 @Data
@@ -21,20 +19,10 @@ public class Friendship {
     }
 
     public Friendship(int user1Id, int user2Id) {
-        // use UserDAO to fetch User objects
-        UserDAO userDAO = new UserDAO();
-        try {
-            this.user1 = userDAO.findById(user1Id);
-            if (this.user1 == null) {
-                throw new IllegalArgumentException("User with ID " + user1Id + " does not exist.");
-            }
-            this.user2 = userDAO.findById(user2Id);
-            if (this.user2 == null) {
-                throw new IllegalArgumentException("User with ID " + user2Id + " does not exist.");
-            }
-        } catch (java.sql.SQLException e) {
-            throw new RuntimeException("Database error while fetching users", e);
-        }
+        this.user1 = new User();
+        this.user1.setId(user1Id);
+        this.user2 = new User();
+        this.user2.setId(user2Id);
     }
 
     public Long getId() {
@@ -42,18 +30,15 @@ public class Friendship {
     }
 
     public int getUser1Id() {
-        return user1.getId();
+        return user1 != null ? user1.getId() : 0;
     }
 
     public int getUser2Id() {
-        return user2.getId();
+        return user2 != null ? user2.getId() : 0;
     }
 
     public String getStatus() {
-        // Assuming status is determined by the relationship between user1 and user2
-        if (user1 != null && user2 != null) {
-            return "Friends";
-        }
-        return "Not Friends";
+        // You may want to set status from DB or service layer
+        return "Friends";
     }
 }
