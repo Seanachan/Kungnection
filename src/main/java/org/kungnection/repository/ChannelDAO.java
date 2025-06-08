@@ -127,4 +127,19 @@ public class ChannelDAO {
         channels.sort((c1, c2) -> Long.compare(c2.getLastActiveTime(), c1.getLastActiveTime()));
         return channels;
     }
+
+    // Add this method to ChannelDAO
+    public boolean existsByCode(String code) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM channels WHERE channel_code = ?";
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
+            ps.setString(1, code);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }
