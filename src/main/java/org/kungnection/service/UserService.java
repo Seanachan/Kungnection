@@ -3,7 +3,6 @@ package org.kungnection.service;
 import org.kungnection.db.*;
 import org.kungnection.model.*;
 // import org.kungnection.repository.*;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +62,6 @@ public class UserService {
 
     // -------------------- 頻道功能 --------------------
 
-    @Transactional
     public Channel createChannel(User user, String name) {
         Channel channel = new Channel();
         channel.setName(name);
