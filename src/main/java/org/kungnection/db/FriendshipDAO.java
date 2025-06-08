@@ -3,7 +3,10 @@ package org.kungnection.db;
 import org.kungnection.model.Friendship;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FriendshipDAO {
     private final Connection conn;
@@ -84,5 +87,27 @@ public class FriendshipDAO {
             throw e;
         }
         return false;
+    }
+
+    public List<Friendship> findAllByUserId(int userId) throws SQLException {
+        List<Friendship> friendships = new ArrayList<>();
+        String sql = "SELECT user_id, friend_id, status FROM friendships WHERE user_id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int friendId = rs.getInt("friend_id");
+                    // String status = rs.getString("status");
+                    Friendship friendship = new Friendship(userId, friendId);
+                    friendships.add(friendship);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("error: finding friendships" + e.getMessage());
+            throw e;
+        }
+        return friendships;
     }
 }

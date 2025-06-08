@@ -1,5 +1,7 @@
 package org.kungnection.model;
 
+import org.kungnection.db.UserDAO;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +24,23 @@ public class Friendship {
     public Friendship(User user1, User user2) {
         this.user1 = user1;
         this.user2 = user2;
+    }
+
+    public Friendship(int user1Id, int user2Id) {
+        // use UserDAO to fetch User objects
+        UserDAO userDAO = new UserDAO();
+        try {
+            this.user1 = userDAO.findById(user1Id);
+            if (this.user1 == null) {
+                throw new IllegalArgumentException("User with ID " + user1Id + " does not exist.");
+            }
+            this.user2 = userDAO.findById(user2Id);
+            if (this.user2 == null) {
+                throw new IllegalArgumentException("User with ID " + user2Id + " does not exist.");
+            }
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException("Database error while fetching users", e);
+        }
     }
 
     public Long getId() {
