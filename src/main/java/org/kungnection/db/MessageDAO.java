@@ -12,7 +12,7 @@ import java.util.List;
 public class MessageDAO {
 	private static final Connection conn = DatabaseUtil.getConnection();
 
-	public void save(Message msg) throws SQLException {
+	public Message save(Message msg) throws SQLException {
 		String sql = "INSERT INTO messages (conversation_id, sender_id, message_text, sent_at, message_type)"
 				+ " VALUES (?, ?, ?, ?, ?)";
 
@@ -29,6 +29,7 @@ public class MessageDAO {
 			System.err.println("error: save" + e.getMessage());
 			throw e;
 		}
+		return msg;
 	}
 
 	public List<Message> findByFriendChatRoomId(int conversationId) throws SQLException {
@@ -75,6 +76,27 @@ public class MessageDAO {
 		} catch (SQLException e) {
 			System.err.println("error: findByChannelId" + e.getMessage());
 			throw e;
+		}
+		return list;
+	}
+
+	public List<Message> findByFriendRoomOrderByTimestampAsc(int roomId) throws SQLException {
+		List<Message> list = new ArrayList<>();
+		String sql = "SELECT * FROM messages WHERE conversation_id = ? ORDER BY sent_at ASC";
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, roomId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("id");
+					int senderId = rs.getInt("sender_id");
+					String messageText = rs.getString("message_text");
+					Timestamp sentAt = rs.getTimestamp("sent_at");
+					String messageType = rs.getString("message_type");
+
+					Message msg = new Message(id, roomId, senderId, messageText, sentAt.getTime(), messageType);
+					list.add(msg);
+				}
+			}
 		}
 		return list;
 	}
