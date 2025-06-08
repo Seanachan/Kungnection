@@ -19,10 +19,6 @@ dependencies {
     // ✅ Spring Boot Starter Web
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    // ✅ Spring Boot JPA + H2
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly("com.h2database:h2")
-
     // ✅ Lombok (重點)
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
@@ -37,7 +33,6 @@ dependencies {
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
 
-    implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("mysql:mysql-connector-java:8.0.33")

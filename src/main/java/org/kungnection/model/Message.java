@@ -1,6 +1,5 @@
 package org.kungnection.model;
 
-import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -8,28 +7,21 @@ import java.time.LocalDateTime;
 // import org.kungnection.model.Channel;
 // import org.kungnection.model.FriendChatRoom;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
     private User sender;
 
     private LocalDateTime timestamp;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
     private FriendChatRoom friendRoom;
 
-    @ManyToOne
     private Channel channel;
 
     public Message(int id, int senderID, int convId, String messageText, long timestamp, String messageType) {
