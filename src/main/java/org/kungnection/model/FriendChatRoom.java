@@ -3,9 +3,6 @@ package org.kungnection.model;
 import lombok.*;
 import java.util.List;
 
-import org.kungnection.db.MessageDAO;
-import org.kungnection.db.UserDAO;
-
 // import org.kungnection.model.Message;
 
 @Data
@@ -41,28 +38,18 @@ public class FriendChatRoom {
     }
 
     public FriendChatRoom(int user1Id, int user2Id) {
-        UserDAO userDAO = new UserDAO();
-        MessageDAO messageDAO = new MessageDAO();
-        try {
-            this.user1 = userDAO.findById(user1Id);
-            if (this.user1 == null) {
-                throw new IllegalArgumentException("User with ID " + user1Id + " does not exist.");
-            }
-            this.user2 = userDAO.findById(user2Id);
-            if (this.user2 == null) {
-                throw new IllegalArgumentException("User with ID " + user2Id + " does not exist.");
-            }
-            this.messages = messageDAO.findByFriendChatRoomId(this.id);
-        } catch (java.sql.SQLException e) {
-            throw new RuntimeException("Database error while fetching users or messages", e);
-        }
+        this.user1 = new User();
+        this.user1.setId(user1Id);
+        this.user2 = new User();
+        this.user2.setId(user2Id);
+        // messages can be set later by the service/DAO if needed
     }
 
     public int getUser1Id() {
-        return user1 != null ? user1.getId() : 0; // 或拋出異常
+        return user1 != null ? user1.getId() : 0;
     }
 
     public int getUser2Id() {
-        return user2 != null ? user2.getId() : 0; // 或拋出異常
+        return user2 != null ? user2.getId() : 0;
     }
 }

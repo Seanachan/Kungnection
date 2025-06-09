@@ -24,14 +24,13 @@ public class Message {
 
     private Channel channel;
 
-    public Message(int id, int senderID, int convId, String messageText, long timestamp, String messageType) {
-        // this.sender = sender;
-        // this.timestamp = timestamp;
+    public Message(int id, int senderId, int convId, String messageText, long timestamp, String messageType) {
         this.id = id;
-        this.timestamp = LocalDateTime.ofEpochSecond(timestamp / 1000, 0, java.time.ZoneOffset.UTC);
+        this.sender = new User();
+        this.sender.setId(senderId);
+        this.timestamp = java.time.Instant.ofEpochMilli(timestamp).atZone(java.time.ZoneOffset.UTC).toLocalDateTime();
         this.content = messageText;
-        this.friendRoom = null; // or set based on messageType if needed
-        this.channel = null; // or set based on messageType if needed
+        // friendRoom and channel can be set by the DAO/service if needed
     }
 
     public int getConversationId() {
@@ -44,7 +43,7 @@ public class Message {
     }
 
     public int getSenderId() {
-        return sender != null ? sender.getId() : 0; // or throw an exception if sender is null
+        return sender != null ? sender.getId() : 0;
     }
 
     public String getMessageText() {
@@ -52,7 +51,7 @@ public class Message {
     }
 
     public long getTimestamp() {
-        return timestamp != null ? timestamp.toInstant(java.time.ZoneOffset.UTC).toEpochMilli() : 0L;
+        return timestamp != null ? timestamp.atZone(java.time.ZoneOffset.UTC).toInstant().toEpochMilli() : 0L;
     }
 
     public LocalDateTime getTimestampAsLocalDateTime() {

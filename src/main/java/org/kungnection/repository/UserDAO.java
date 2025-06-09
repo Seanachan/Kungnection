@@ -1,46 +1,38 @@
-package org.kungnection.db;
+package org.kungnection.repository;
 
 import org.kungnection.model.User;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javax.sql.DataSource;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserDAO {
-    private static final Connection conn = DatabaseUtil.getConnection();
-    // @Override
-    // public PreparedStatement prepareStatement(String sql) throws SQLException {
-    // // This is a placeholder for the actual connection logic.
-    // // In a real application, you would return a PreparedStatement from an actual
-    // database connection.
-    // throw new UnsupportedOperationException("Not implemented yet");
-    // }
-    // };
+    private final DataSource dataSource;
 
-    public UserDAO() {
-        // Constructor can be used to initialize resources if needed
+    public UserDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public User save(User user) {
         String sql = "INSERT INTO users (username, nickname, email, password_hash) VALUES (?, ?, ?, ?)";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getNickname());
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getPasswordHash());
-
             ps.executeUpdate();
             System.out.println("User saved: " + user);
         } catch (SQLException e) {
             System.err.println("error: save" + e.getMessage());
         }
-        // TODO
         return user;
     }
 
     public User findByUsername(String username) throws SQLException {
-        String sql = "SELECT user_id, username, email, password_hash FROM users WHERE username = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT user_id, username, nickname, email, password_hash FROM users WHERE username = ?";
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -59,7 +51,8 @@ public class UserDAO {
 
     public User findByEmail(String email) throws SQLException {
         String sql = "SELECT user_id, username, nickname, email, password_hash FROM users WHERE email = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -78,7 +71,8 @@ public class UserDAO {
 
     public User findById(int userId) throws SQLException {
         String sql = "SELECT user_id, username, nickname, email, password_hash FROM users WHERE user_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {

@@ -1,4 +1,4 @@
-package org.kungnection.db;
+package org.kungnection.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,18 +7,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kungnection.model.ChannelMembership;
+import javax.sql.DataSource;
 
+import org.kungnection.model.ChannelMembership;
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class ChannelMembershipDAO {
-    private final static Connection conn = DatabaseUtil.getConnection();
+    private final DataSource dataSource;
+
+    public ChannelMembershipDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public void save(ChannelMembership membership) throws SQLException {
         String sql = "INSERT INTO channel_memberships (user_id, channel_id) VALUES (?, ?)";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, membership.getUserId());
             ps.setInt(2, membership.getChannelId());
-
             ps.executeUpdate();
             System.out.println("Channel membership saved: " + membership);
         } catch (SQLException e) {
@@ -29,11 +36,10 @@ public class ChannelMembershipDAO {
 
     public void delete(int userId, int channelId) throws SQLException {
         String sql = "DELETE FROM channel_memberships WHERE user_id = ? AND channel_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, channelId);
-
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Channel membership deleted: " + userId + " - " + channelId);
@@ -49,10 +55,9 @@ public class ChannelMembershipDAO {
     public List<ChannelMembership> findAllByUserId(int userId) throws SQLException {
         List<ChannelMembership> memberships = new ArrayList<>();
         String sql = "SELECT user_id, channel_id FROM channel_memberships WHERE user_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int channelId = rs.getInt("channel_id");
@@ -70,10 +75,9 @@ public class ChannelMembershipDAO {
     public List<ChannelMembership> findAllByChannelId(int channelId) throws SQLException {
         List<ChannelMembership> memberships = new ArrayList<>();
         String sql = "SELECT user_id, channel_id FROM channel_memberships WHERE channel_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, channelId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int userId = rs.getInt("user_id");
@@ -90,11 +94,10 @@ public class ChannelMembershipDAO {
 
     public boolean existsByUserAndChannel(int userId, int channelId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM channel_memberships WHERE user_id = ? AND channel_id = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, channelId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

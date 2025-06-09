@@ -1,7 +1,11 @@
 package org.kungnection.service;
 
-import org.kungnection.db.*;
 import org.kungnection.model.*;
+import org.kungnection.repository.ChannelDAO;
+import org.kungnection.repository.ChannelMembershipDAO;
+import org.kungnection.repository.FriendChatRoomDAO;
+import org.kungnection.repository.FriendshipDAO;
+import org.kungnection.repository.UserDAO;
 // import org.kungnection.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,18 +136,12 @@ public class UserService {
     }
 
     public List<User> getUsersInChannel(String channelCode) {
-        int channelId;
-        try {
-            channelId = Integer.parseInt(channelCode);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid channel code: " + channelCode, e);
-        }
         Channel channel;
         try {
-            channel = channelDAO.findById(channelId);
+            channel = channelDAO.findByCode(channelCode);
         } catch (java.sql.SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to find channel by id: " + channelId, e);
+            throw new RuntimeException("Failed to find channel by code: " + channelCode, e);
         }
         if (channel == null) {
             throw new RuntimeException("Channel not found: code = " + channelCode);

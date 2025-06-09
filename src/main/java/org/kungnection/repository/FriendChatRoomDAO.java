@@ -1,21 +1,23 @@
-package org.kungnection.db;
+package org.kungnection.repository;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
+import org.kungnection.model.FriendChatRoom;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 
-import org.kungnection.model.FriendChatRoom;
-
+@Repository
 public class FriendChatRoomDAO {
-    private static final Connection conn = DatabaseUtil.getConnection();
+    private final DataSource dataSource;
 
-    public FriendChatRoomDAO() {
-        // Constructor can be used for initialization if needed
+    public FriendChatRoomDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void save(int userId, int friendId) {
         String sql = "INSERT INTO friend_chat_rooms (user_id, friend_id) VALUES (?, ?)";
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
             ps.executeUpdate();
@@ -31,7 +33,8 @@ public class FriendChatRoomDAO {
 
     public FriendChatRoom findById(int userId, int friendId) {
         String sql = "SELECT * FROM friend_chat_rooms WHERE user_id = ? AND friend_id = ?";
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
             try (var rs = ps.executeQuery()) {
@@ -47,7 +50,8 @@ public class FriendChatRoomDAO {
 
     public FriendChatRoom findByRoomId(int roomId) {
         String sql = "SELECT user_id, friend_id FROM friend_chat_rooms WHERE room_id = ?";
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, roomId);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -62,7 +66,8 @@ public class FriendChatRoomDAO {
 
     public void delete(int userId, int friendId) {
         String sql = "DELETE FROM friend_chat_rooms WHERE user_id = ? AND friend_id = ?";
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
             int rowsAffected = ps.executeUpdate();
@@ -79,7 +84,8 @@ public class FriendChatRoomDAO {
     public List<FriendChatRoom> findAllByUserId(int userId) {
         String sql = "SELECT friend_id FROM friend_chat_rooms WHERE user_id = ?";
         List<FriendChatRoom> chatRooms = new ArrayList<>();
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (var rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -96,7 +102,8 @@ public class FriendChatRoomDAO {
 
     public void findAllByFriendId(int friendId) {
         String sql = "SELECT user_id FROM friend_chat_rooms WHERE friend_id = ?";
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, friendId);
             try (var rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -111,7 +118,8 @@ public class FriendChatRoomDAO {
 
     public boolean exists(int userId, int friendId) {
         String sql = "SELECT COUNT(*) FROM friend_chat_rooms WHERE user_id = ? AND friend_id = ?";
-        try (var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
             try (var rs = ps.executeQuery()) {
@@ -123,15 +131,5 @@ public class FriendChatRoomDAO {
             System.err.println("Error checking existence of friend chat room: " + e.getMessage());
         }
         return false;
-    }
-
-    public void close() {
-        try {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (Exception e) {
-            System.err.println("Error closing connection: " + e.getMessage());
-        }
     }
 }

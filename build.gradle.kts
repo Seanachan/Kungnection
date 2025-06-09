@@ -32,6 +32,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -40,4 +41,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register("startMysql") {
+    doLast {
+        exec {
+            commandLine("docker", "run", "--name", "kungnection", "-e", "MYSQL_ROOT_PASSWORD=password", "-e", "MYSQL_DATABASE=kungnection", "-p", "3306:3306", "-d", "mysql:latest")
+        }
+    }
 }

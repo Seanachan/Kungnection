@@ -10,22 +10,20 @@ import java.util.List;
 @AllArgsConstructor
 public class Channel {
 
-    private String code;
-
     private int id;
-
+    private String code;
     private String name;
-
-    // 加入成員關聯
+    private String description;
+    private long lastActiveTime;
     private List<ChannelMembership> members;
-
-    // 新增：頻道的所有訊息
     private List<Message> messages;
 
     public Channel(int id, String code, String name, String description, long lastActiveTime) {
         this.id = id;
         this.code = code;
         this.name = name;
+        this.description = description;
+        this.lastActiveTime = lastActiveTime;
     }
 
     public int getChannelId() {
@@ -37,12 +35,10 @@ public class Channel {
     }
 
     public String getChannelDescription() {
-        return "Channel: " + name + " (Code: " + code + ")";
+        return description;
     }
 
     public long getLastActiveTime() {
-        // TODO
-        // return lastActiveTime;
-        return 0;
+        return lastActiveTime;
     }
 }
