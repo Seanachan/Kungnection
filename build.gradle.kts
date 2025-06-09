@@ -42,3 +42,11 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.register("startMysql") {
+    doLast {
+        exec {
+            commandLine("docker", "run", "--name", "kungnection", "-e", "MYSQL_ROOT_PASSWORD=password", "-e", "MYSQL_DATABASE=kungnection", "-p", "3306:3306", "-d", "mysql:latest")
+        }
+    }
+}
