@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByFriendRoomOrderByTimestampAsc(FriendChatRoom room);
+    List<Message> findByChannelOrderByTimestampAsc(Channel channel);
 }
+
