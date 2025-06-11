@@ -30,5 +30,6 @@ public class Message {
     private FriendChatRoom friendRoom;
 
     @ManyToOne
-    private Channel channel; // 可以先留著，未來實作頻道訊息用
+    @JoinColumn(name = "channel_code", referencedColumnName = "code")
+    private Channel channel;
 }

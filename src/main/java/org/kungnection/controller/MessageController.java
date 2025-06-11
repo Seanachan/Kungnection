@@ -77,4 +77,62 @@ public class MessageController {
                 ))
                 .toList();
     }
+
+    private final ChannelRepository channelRepository;  // 記得 @RequiredArgsConstructor 自動注入
+    /**
+     *  * ✅ 發送訊息給頻道
+     * */
+    @PostMapping("/channel/{channelCode}")
+    public MessageDTO sendToChannel(
+        HttpServletRequest request,
+        @PathVariable String channelCode,
+        @RequestBody String content) {
+
+    Long userId = (Long) request.getAttribute("userId");
+    if (userId == null) throw new RuntimeException("User not authenticated.");
+
+    User sender = userRepository.findById(userId).orElseThrow();
+    Channel channel = channelRepository.findById(channelCode).orElseThrow();
+
+    Message message = new Message();
+    message.setSender(sender);
+    message.setChannel(channel);
+    message.setContent(content);
+    message.setTimestamp(java.time.LocalDateTime.now());
+
+    Message saved = messageRepository.save(message);
+
+    return new MessageDTO(
+            saved.getId(),
+            sender.getId(),
+            sender.getNickname(),
+            saved.getContent(),
+            saved.getTimestamp().format(FORMATTER)
+    );
+}
+
+/**
+ * ✅ 查詢頻道歷史訊息
+ */
+    @GetMapping("/channel/{channelCode}")
+    public List<MessageDTO> getChannelMessages(
+        HttpServletRequest request,
+        @PathVariable String channelCode) {
+
+    Long userId = (Long) request.getAttribute("userId");
+    if (userId == null) throw new RuntimeException("User not authenticated.");
+
+    Channel channel = channelRepository.findById(channelCode).orElseThrow();
+
+    return messageRepository.findByChannelOrderByTimestampAsc(channel)
+            .stream()
+            .map(m -> new MessageDTO(
+                    m.getId(),
+                    m.getSender().getId(),
+                    m.getSender().getNickname(),
+                    m.getContent(),
+                    m.getTimestamp().format(FORMATTER)
+            ))
+            .toList();
+        }
 }
