@@ -25,6 +25,7 @@ dependencies {
 
     // ✅ 測試
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.h2database:h2")
 
     // ✅ JJWT - JSON Web Token (io.jsonwebtoken)
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
