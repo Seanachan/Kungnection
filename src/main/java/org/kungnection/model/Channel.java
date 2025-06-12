@@ -41,8 +41,4 @@ public class Channel {
     public long getLastActiveTime() {
         return lastActiveTime;
     }
-
-    //新增
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Message> messages;
 }
