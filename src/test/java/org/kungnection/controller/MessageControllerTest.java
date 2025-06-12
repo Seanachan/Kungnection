@@ -5,6 +5,7 @@ import org.kungnection.dto.MessageDTO;
 import org.kungnection.model.FriendChatRoom;
 import org.kungnection.model.Message;
 import org.kungnection.model.User;
+import org.kungnection.repository.ChannelDAO;
 import org.kungnection.repository.FriendChatRoomDAO;
 import org.kungnection.repository.MessageDAO;
 import org.kungnection.repository.UserDAO;
@@ -31,11 +32,13 @@ public class MessageControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private MessageDAO messageDAO;
+    private ChannelDAO channelDAO;
     @MockBean
     private FriendChatRoomDAO friendChatRoomDAO;
     @MockBean
     private UserDAO userDAO;
+    @MockBean
+    private MessageDAO messageDAO;
 
     @Test
     public void testGetFriendMessages() throws Exception {
