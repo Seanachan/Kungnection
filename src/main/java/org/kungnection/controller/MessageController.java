@@ -4,9 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.kungnection.dto.MessageDTO;
 import org.kungnection.model.*;
-import org.kungnection.repository.FriendChatRoomDAO;
-import org.kungnection.repository.MessageDAO;
-import org.kungnection.repository.UserDAO;
+import org.kungnection.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +21,8 @@ public class MessageController {
         private FriendChatRoomDAO friendChatRoomDAO;
         @Autowired
         private UserDAO userDAO;
+        @Autowired
+        private ChannelDAO channelDAO;
 
         private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -77,9 +77,7 @@ public class MessageController {
                 } catch (java.sql.SQLException e) {
                         throw new RuntimeException("Failed to retrieve messages", e);
                 }
-
-        //新增
-        private final ChannelRepository channelRepository;  // 記得 @RequiredArgsConstructor 自動注入
+        }
 
         @PostMapping("/channel/{channelCode}")
         public MessageDTO sendToChannel(
@@ -87,27 +85,30 @@ public class MessageController {
                 @PathVariable String channelCode,
                 @RequestBody String content) {
 
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
+            int userId = (int) request.getAttribute("userId");
 
-        User sender = userRepository.findById(userId).orElseThrow();
-        Channel channel = channelRepository.findById(channelCode).orElseThrow();
+            try {
+                User sender = userDAO.findById(userId);
+                Channel channel = channelDAO.findByCode(channelCode);
 
-        Message message = new Message();
-        message.setSender(sender);
-        message.setChannel(channel);
-        message.setContent(content);
-        message.setTimestamp(java.time.LocalDateTime.now());
+                Message message = new Message();
+                message.setSender(sender);
+                message.setChannel(channel);
+                message.setContent(content);
+                message.setTimestamp(java.time.LocalDateTime.now());
 
-        Message saved = messageRepository.save(message);
+                Message saved = messageDAO.save(message);
 
-        return new MessageDTO(
-                saved.getId(),
-                sender.getId(),
-                sender.getNickname(),
-                saved.getContent(),
-                saved.getTimestamp().format(FORMATTER)
-        );
+                return new MessageDTO(
+                        saved.getId(),
+                        sender.getId(),
+                        sender.getNickname(),
+                        saved.getContent(),
+                        saved.getTimestampAsLocalDateTime().format(FORMATTER)
+                );
+            } catch (java.sql.SQLException e) {
+                throw new RuntimeException("Failed to send message to channel", e);
+            }
         }
 
 
@@ -116,20 +117,21 @@ public class MessageController {
                 HttpServletRequest request,
                 @PathVariable String channelCode) {
 
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
+        try {
+            Channel channel = channelDAO.findByCode(channelCode);
 
-        Channel channel = channelRepository.findById(channelCode).orElseThrow();
-
-        return messageRepository.findByChannelOrderByTimestampAsc(channel)
-                .stream()
-                .map(m -> new MessageDTO(
-                        m.getId(),
-                        m.getSender().getId(),
-                        m.getSender().getNickname(),
-                        m.getContent(),
-                        m.getTimestamp().format(FORMATTER)
-                ))
-                .toList();
+            return messageDAO.findByChannelOrderByTimestampAsc(channel)
+                    .stream()
+                    .map(m -> new MessageDTO(
+                            m.getId(),
+                            m.getSender().getId(),
+                            m.getSender().getNickname(),
+                            m.getContent(),
+                            m.getTimestampAsLocalDateTime().format(FORMATTER)
+                    ))
+                    .toList();
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException("Failed to retrieve channel messages", e);
+        }
         }
 }
