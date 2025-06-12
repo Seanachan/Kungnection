@@ -31,4 +31,5 @@ public class ChannelMembership {
     public int getChannelId() {
         return channel != null ? channel.getId() : 0;
     }
+    
 }

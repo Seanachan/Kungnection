@@ -66,4 +66,9 @@ public class Message {
         }
         return "UNKNOWN";
     }
+
+    //新增
+    @ManyToOne
+    @JoinColumn(name = "channel_code", referencedColumnName = "code")
+    private Channel channel;
 }

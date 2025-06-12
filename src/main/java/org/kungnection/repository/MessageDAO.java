@@ -102,4 +102,7 @@ public class MessageDAO {
 		}
 		return list;
 	}
+
+	//新增
+	List<Message> findByChannelOrderByTimestampAsc(Channel channel);
 }

@@ -134,4 +134,29 @@ public class UserController {
                 "friends", friends,
                 "channels", channels);
     }
+
+    //新增
+    @GetMapping("/me")
+    public User getMyProfile(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) throw new RuntimeException("User not authenticated.");
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found."));
+    }
+
+    @PatchMapping("/me")
+    public User updateMyProfile(HttpServletRequest request, @RequestBody UserUpdateDTO dto) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) throw new RuntimeException("User not authenticated.");
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        // ✅ 僅在不為 null 的情況下更新欄位
+        if (dto.getUsername() != null) user.setUsername(dto.getUsername());
+        if (dto.getNickname() != null) user.setNickname(dto.getNickname());
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        if (dto.getPassword() != null) user.setPassword(dto.getPassword()); // 👉 如有加密需求，記得加密
+
+        return userRepository.save(user);
+    }
 }
