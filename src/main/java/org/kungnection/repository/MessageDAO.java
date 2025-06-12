@@ -1,6 +1,6 @@
 package org.kungnection.repository;
 
-import org.kungnection.model.Message;
+import org.kungnection.model.*;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -103,6 +103,28 @@ public class MessageDAO {
 		return list;
 	}
 
-	//新增
-	List<Message> findByChannelOrderByTimestampAsc(Channel channel);
+	public List<Message> findByChannelOrderByTimestampAsc(Channel channel) throws SQLException {
+		List<Message> list = new ArrayList<>();
+		String sql = "SELECT * FROM messages WHERE channel_id = ? ORDER BY sent_at ASC";
+		try (var conn = dataSource.getConnection();
+				var ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, channel.getId());
+			try (var rs = ps.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("id");
+					int senderId = rs.getInt("sender_id");
+					String messageText = rs.getString("message_text");
+					Timestamp sentAt = rs.getTimestamp("sent_at");
+					String messageType = rs.getString("message_type");
+					Message msg = new Message(id, channel.getId(), senderId, messageText, sentAt.getTime(), messageType);
+					list.add(msg);
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("error: findByChannelOrderByTimestampAsc" + e.getMessage());
+			throw e;
+		}
+		list.sort((m1, m2) -> Long.compare(m1.getTimestamp(), m2.getTimestamp()));
+		return list;
+	}
 }
