@@ -128,4 +128,27 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.friends").exists())
                 .andExpect(jsonPath("$.channels").exists());
     }
+
+    @Test
+    public void testGetMyProfile() throws Exception {
+        User user = new User(); user.setId(1);
+        when(userDAO.findById(1)).thenReturn(user);
+        mockMvc.perform(get("/user/me").requestAttr("userId", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateMyProfile() throws Exception {
+        User user = new User(); user.setId(1);
+        User updated = new User(); updated.setId(1); updated.setUsername("newname");
+        when(userDAO.findById(1)).thenReturn(user);
+        when(userDAO.save(user)).thenReturn(updated);
+        String json = "{\"username\":\"newname\"}";
+        mockMvc.perform(
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch("/user/me")
+                        .requestAttr("userId", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
 }
