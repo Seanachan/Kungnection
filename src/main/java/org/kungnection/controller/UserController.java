@@ -151,7 +151,6 @@ public class UserController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-        // ✅ 僅在不為 null 的情況下更新欄位
         if (dto.getUsername() != null) user.setUsername(dto.getUsername());
         if (dto.getNickname() != null) user.setNickname(dto.getNickname());
         if (dto.getEmail() != null) user.setEmail(dto.getEmail());
