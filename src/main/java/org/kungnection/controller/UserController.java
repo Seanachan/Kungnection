@@ -1,6 +1,7 @@
 package org.kungnection.controller;
 
 import org.kungnection.model.*;
+import org.kungnection.dto.UserUpdateDTO;
 import org.kungnection.repository.UserDAO;
 import org.kungnection.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -138,24 +139,30 @@ public class UserController {
     //新增
     @GetMapping("/me")
     public User getMyProfile(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found."));
+        int userId = (int) request.getAttribute("userId");
+        try {
+            return userDAO.findById(userId);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException("Database error while fetching user by id: " + userId, e);
+        }
     }
 
     @PatchMapping("/me")
     public User updateMyProfile(HttpServletRequest request, @RequestBody UserUpdateDTO dto) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) throw new RuntimeException("User not authenticated.");
+        int userId = (int) request.getAttribute("userId");
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+        User user;
+        try {
+            user = userDAO.findById(userId);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException("Database error while fetching user by id: " + userId, e);
+        }
 
         if (dto.getUsername() != null) user.setUsername(dto.getUsername());
         if (dto.getNickname() != null) user.setNickname(dto.getNickname());
         if (dto.getEmail() != null) user.setEmail(dto.getEmail());
-        if (dto.getPassword() != null) user.setPassword(dto.getPassword()); // 👉 如有加密需求，記得加密
+        if (dto.getPassword() != null) user.setPassword(dto.getPassword());
 
-        return userRepository.save(user);
+        return userDAO.save(user);
     }
 }
