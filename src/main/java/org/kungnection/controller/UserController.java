@@ -33,7 +33,7 @@ public class UserController {
     // ✅ 創立頻道
     @PostMapping("/channels")
     public Channel createChannel(HttpServletRequest request, @RequestBody String channelName) {
-        int userId = (int) request.getAttribute("userId");
+        int userId = ((Long) request.getAttribute("userId")).intValue();
         User user = getUserOrThrow(userId);
         return userService.createChannel(user, channelName);
     }
@@ -41,7 +41,7 @@ public class UserController {
     // ✅ 加入頻道（用六碼代碼）
     @PostMapping("/channels/join")
     public String joinChannel(HttpServletRequest request, @RequestParam String code) {
-        int userId = (int) request.getAttribute("userId");
+        int userId = ((Long) request.getAttribute("userId")).intValue();
         System.out.println("✅ token userId = " + userId + ", code = " + code);
         User user = getUserOrThrow(userId);
         return userService.joinChannel(user, code) ? "Joined successfully." : "Join failed.";
@@ -59,7 +59,7 @@ public class UserController {
     public String addFriendByUsername(HttpServletRequest request, @RequestParam String username) {
         System.out.println("🚨 Controller 中取得的 userId = " + request.getAttribute("userId"));
         try {
-            int userId = (int) request.getAttribute("userId");
+            int userId = ((Long) request.getAttribute("userId")).intValue();
 
             System.out.println("🔍 登入者 userId: " + userId);
             System.out.println("🔍 欲加好友 username: " + username);
@@ -113,7 +113,7 @@ public class UserController {
 
     @GetMapping("/sidebar")
     public Map<String, Object> getSidebar(HttpServletRequest request) {
-        int userId = (int) request.getAttribute("userId");
+        int userId = ((Long) request.getAttribute("userId")).intValue();
 
         User user = getUserOrThrow(userId);
 
@@ -139,7 +139,7 @@ public class UserController {
     //新增
     @GetMapping("/me")
     public User getMyProfile(HttpServletRequest request) {
-        int userId = (int) request.getAttribute("userId");
+        int userId = ((Long) request.getAttribute("userId")).intValue();
         try {
             return userDAO.findById(userId);
         } catch (java.sql.SQLException e) {
@@ -149,7 +149,7 @@ public class UserController {
 
     @PatchMapping("/me")
     public User updateMyProfile(HttpServletRequest request, @RequestBody UserUpdateDTO dto) {
-        int userId = (int) request.getAttribute("userId");
+        int userId = ((Long) request.getAttribute("userId")).intValue();
 
         User user;
         try {
