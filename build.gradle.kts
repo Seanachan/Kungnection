@@ -16,18 +16,21 @@ repositories {
 }
 
 dependencies {
-    // ✅ Spring Boot Starter Web
+    // Spring Boot Starter Web
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    // ✅ Lombok (重點)
+    // Spring WebFlux (for WebClient)
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    // ✅ 測試
+    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
 
-    // ✅ JJWT - JSON Web Token (io.jsonwebtoken)
+    // JJWT - JSON Web Token
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
