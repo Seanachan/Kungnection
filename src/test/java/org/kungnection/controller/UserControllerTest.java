@@ -40,7 +40,7 @@ public class UserControllerTest {
         when(userDAO.findById(1)).thenReturn(user);
         when(userService.createChannel(eq(user), eq("test"))).thenReturn(channel);
         mockMvc.perform(post("/user/channels")
-                .requestAttr("userId", 1)
+                .requestAttr("userId", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("\"test\""))
                 .andExpect(status().isOk());
@@ -52,7 +52,7 @@ public class UserControllerTest {
         when(userDAO.findById(1)).thenReturn(user);
         when(userService.joinChannel(eq(user), eq("ABC123"))).thenReturn(true);
         mockMvc.perform(post("/user/channels/join")
-                .requestAttr("userId", 1)
+                .requestAttr("userId", 1L)
                 .param("code", "ABC123"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Joined successfully."));
@@ -80,7 +80,7 @@ public class UserControllerTest {
         when(userDAO.findByUsername("bob")).thenReturn(friend);
         when(userService.addFriend(user, friend)).thenReturn(true);
         mockMvc.perform(post("/user/friends/add")
-                .requestAttr("userId", 1)
+                .requestAttr("userId", 1L)
                 .param("username", "bob"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Friend added."));
@@ -123,7 +123,7 @@ public class UserControllerTest {
         when(userDAO.findById(1)).thenReturn(user);
         when(userService.getFriendChatRooms(user)).thenReturn(List.of());
         when(userService.getChannels(user)).thenReturn(List.of());
-        mockMvc.perform(get("/user/sidebar").requestAttr("userId", 1))
+        mockMvc.perform(get("/user/sidebar").requestAttr("userId", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.friends").exists())
                 .andExpect(jsonPath("$.channels").exists());
@@ -133,7 +133,7 @@ public class UserControllerTest {
     public void testGetMyProfile() throws Exception {
         User user = new User(); user.setId(1);
         when(userDAO.findById(1)).thenReturn(user);
-        mockMvc.perform(get("/user/me").requestAttr("userId", 1))
+        mockMvc.perform(get("/user/me").requestAttr("userId", 1L))
                 .andExpect(status().isOk());
     }
 
@@ -146,7 +146,7 @@ public class UserControllerTest {
         String json = "{\"username\":\"newname\"}";
         mockMvc.perform(
                 org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch("/user/me")
-                        .requestAttr("userId", 1)
+                        .requestAttr("userId", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk());
