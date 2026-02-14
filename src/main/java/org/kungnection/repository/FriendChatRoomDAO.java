@@ -1,13 +1,18 @@
 package org.kungnection.repository;
 
 import javax.sql.DataSource;
+
 import org.kungnection.model.FriendChatRoom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class FriendChatRoomDAO {
+    private static final Logger log = LoggerFactory.getLogger(FriendChatRoomDAO.class);
     private final DataSource dataSource;
 
     public FriendChatRoomDAO(DataSource dataSource) {
@@ -21,9 +26,9 @@ public class FriendChatRoomDAO {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
             ps.executeUpdate();
-            System.out.println("Friend chat room saved: " + userId + " - " + friendId);
+            log.debug("Friend chat room saved: userId={}, friendId={}", userId, friendId);
         } catch (Exception e) {
-            System.err.println("Error saving friend chat room: " + e.getMessage());
+            log.error("Failed to save friend chat room: {}", e.getMessage());
         }
     }
 
@@ -43,7 +48,7 @@ public class FriendChatRoomDAO {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error finding friend chat room: " + e.getMessage());
+            log.error("Failed to find friend chat room: {}", e.getMessage());
         }
         return null;
     }
@@ -59,7 +64,7 @@ public class FriendChatRoomDAO {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error finding friend chat room by room ID: " + e.getMessage());
+            log.error("Failed to find friend chat room by room ID: {}", e.getMessage());
         }
         return null;
     }
@@ -71,13 +76,9 @@ public class FriendChatRoomDAO {
             ps.setInt(1, userId);
             ps.setInt(2, friendId);
             int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Friend chat room deleted: " + userId + " - " + friendId);
-            } else {
-                System.out.println("No friend chat room found to delete for: " + userId + " - " + friendId);
-            }
+            log.debug("Friend chat room delete affected {} rows for userId={}, friendId={}", rowsAffected, userId, friendId);
         } catch (Exception e) {
-            System.err.println("Error deleting friend chat room: " + e.getMessage());
+            log.error("Failed to delete friend chat room: {}", e.getMessage());
         }
     }
 
@@ -91,29 +92,30 @@ public class FriendChatRoomDAO {
                 while (rs.next()) {
                     int friendId = rs.getInt("friend_id");
                     chatRooms.add(new FriendChatRoom(userId, friendId));
-                    System.out.println("Friend chat room found: " + userId + " - " + friendId);
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error finding friend chat rooms: " + e.getMessage());
+            log.error("Failed to find friend chat rooms: {}", e.getMessage());
         }
         return chatRooms;
     }
 
-    public void findAllByFriendId(int friendId) {
+    public List<FriendChatRoom> findAllByFriendId(int friendId) {
         String sql = "SELECT user_id FROM friend_chat_rooms WHERE friend_id = ?";
+        List<FriendChatRoom> chatRooms = new ArrayList<>();
         try (var conn = dataSource.getConnection();
                 var ps = conn.prepareStatement(sql)) {
             ps.setInt(1, friendId);
             try (var rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int userId = rs.getInt("user_id");
-                    System.out.println("Friend chat room found: " + userId + " - " + friendId);
+                    chatRooms.add(new FriendChatRoom(userId, friendId));
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error finding friend chat rooms: " + e.getMessage());
+            log.error("Failed to find friend chat rooms by friend ID: {}", e.getMessage());
         }
+        return chatRooms;
     }
 
     public boolean exists(int userId, int friendId) {
@@ -128,7 +130,7 @@ public class FriendChatRoomDAO {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error checking existence of friend chat room: " + e.getMessage());
+            log.error("Failed to check friend chat room existence: {}", e.getMessage());
         }
         return false;
     }

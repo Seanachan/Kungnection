@@ -1,6 +1,9 @@
 package org.kungnection.repository;
 
 import org.kungnection.model.Friendship;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class FriendshipDAO {
+    private static final Logger log = LoggerFactory.getLogger(FriendshipDAO.class);
     private final DataSource dataSource;
 
     public FriendshipDAO(DataSource dataSource) {
@@ -25,9 +29,9 @@ public class FriendshipDAO {
             ps.setInt(1, friendship.getUser1Id());
             ps.setInt(2, friendship.getUser2Id());
             ps.executeUpdate();
-            System.out.println("Friendship saved: " + friendship);
+            log.debug("Friendship saved: {}", friendship);
         } catch (SQLException e) {
-            System.err.println("error: save" + e.getMessage());
+            log.error("Failed to save friendship: {}", e.getMessage());
             throw e;
         }
     }
@@ -40,13 +44,9 @@ public class FriendshipDAO {
             ps.setInt(2, user1Id);
             ps.setInt(3, user2Id);
             int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Friendship status updated: " + user1Id + " - " + user2Id + " to " + status);
-            } else {
-                System.out.println("No friendship found to update for: " + user1Id + " - " + user2Id);
-            }
+            log.debug("Friendship status update affected {} rows for user1={}, user2={}", rowsAffected, user1Id, user2Id);
         } catch (SQLException e) {
-            System.err.println("error: updateStatus" + e.getMessage());
+            log.error("Failed to update friendship status: {}", e.getMessage());
             throw e;
         }
     }
@@ -58,13 +58,9 @@ public class FriendshipDAO {
             ps.setInt(1, user1Id);
             ps.setInt(2, user2Id);
             int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Friendship deleted: " + user1Id + " - " + user2Id);
-            } else {
-                System.out.println("No friendship found to delete for: " + user1Id + " - " + user2Id);
-            }
+            log.debug("Friendship delete affected {} rows for user1={}, user2={}", rowsAffected, user1Id, user2Id);
         } catch (SQLException e) {
-            System.err.println("error: delete" + e.getMessage());
+            log.error("Failed to delete friendship: {}", e.getMessage());
             throw e;
         }
     }
@@ -81,7 +77,7 @@ public class FriendshipDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: exists" + e.getMessage());
+            log.error("Failed to check friendship existence: {}", e.getMessage());
             throw e;
         }
         return false;
@@ -101,7 +97,7 @@ public class FriendshipDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: finding friendships" + e.getMessage());
+            log.error("Failed to find friendships: {}", e.getMessage());
             throw e;
         }
         return friendships;

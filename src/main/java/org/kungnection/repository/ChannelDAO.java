@@ -1,6 +1,9 @@
 package org.kungnection.repository;
 
 import org.kungnection.model.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class ChannelDAO {
+    private static final Logger log = LoggerFactory.getLogger(ChannelDAO.class);
     private final DataSource dataSource;
 
     public ChannelDAO(DataSource dataSource) {
@@ -26,9 +30,9 @@ public class ChannelDAO {
             ps.setString(2, channel.getName());
             ps.setString(3, channel.getChannelDescription());
             ps.executeUpdate();
-            System.out.println("Channel saved: " + channel);
+            log.debug("Channel saved: {}", channel.getName());
         } catch (SQLException e) {
-            System.err.println("error: save" + e.getMessage());
+            log.error("Failed to save channel: {}", e.getMessage());
             throw e;
         }
     }
@@ -49,7 +53,7 @@ public class ChannelDAO {
                 channels.add(channel);
             }
         } catch (SQLException e) {
-            System.err.println("error: finding channels" + e.getMessage());
+            log.error("Failed to find all channels: {}", e.getMessage());
             throw e;
         }
         return channels;
@@ -73,7 +77,7 @@ public class ChannelDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: finding channel by ID " + e.getMessage());
+            log.error("Failed to find channel by ID: {}", e.getMessage());
             throw e;
         }
     }
@@ -96,7 +100,7 @@ public class ChannelDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: finding channel by code " + e.getMessage());
+            log.error("Failed to find channel by code: {}", e.getMessage());
             throw e;
         }
     }
@@ -123,14 +127,13 @@ public class ChannelDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: finding channels by userId " + e.getMessage());
+            log.error("Failed to find channels by user ID: {}", e.getMessage());
             throw e;
         }
         channels.sort((c1, c2) -> Long.compare(c2.getLastActiveTime(), c1.getLastActiveTime()));
         return channels;
     }
 
-    // Add this method to ChannelDAO
     public boolean existsByCode(String code) throws SQLException {
         String sql = "SELECT COUNT(*) FROM channels WHERE channel_code = ?";
         try (var conn = dataSource.getConnection();

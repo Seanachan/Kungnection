@@ -1,20 +1,24 @@
 package org.kungnection;
 
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * Service for executing code submissions via the Judge0 API.
+ */
 @Service
 public class Judge0Service {
-  private final WebClient webClient;
+    private static final Logger log = LoggerFactory.getLogger(Judge0Service.class);
+    private final WebClient webClient;
 
-  public Judge0Service(@Value("${X-RapidAPI-Key}") String apiKey) {
-    // if (apiKey == null || apiKey.isEmpty()) {
-    //   throw new IllegalStateException("X_RAPIDAPI_KEY environment variable is not set");
-    // }
-    System.out.println("apikey: "+apiKey);
-    this.webClient = WebClient.builder()
+    public Judge0Service(@Value("${X-RapidAPI-Key}") String apiKey) {
+        log.info("Initializing Judge0Service");
+        this.webClient = WebClient.builder()
         .baseUrl("https://judge0-ce.p.rapidapi.com")
         .defaultHeader("x-rapidapi-key", apiKey)
         .defaultHeader("x-rapidapi-host", "judge0-ce.p.rapidapi.com")

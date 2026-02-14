@@ -1,12 +1,16 @@
 package org.kungnection.repository;
 
 import org.kungnection.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserDAO {
+    private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
     private final DataSource dataSource;
 
     public UserDAO(DataSource dataSource) {
@@ -22,9 +26,9 @@ public class UserDAO {
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getPasswordHash());
             ps.executeUpdate();
-            System.out.println("User saved: " + user);
+            log.debug("User saved: {}", user.getUsername());
         } catch (SQLException e) {
-            System.err.println("error: save" + e.getMessage());
+            log.error("Failed to save user: {}", e.getMessage());
         }
         return user;
     }

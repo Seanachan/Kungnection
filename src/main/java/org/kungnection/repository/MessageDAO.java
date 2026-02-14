@@ -1,6 +1,9 @@
 package org.kungnection.repository;
 
 import org.kungnection.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class MessageDAO {
+	private static final Logger log = LoggerFactory.getLogger(MessageDAO.class);
 	private final DataSource dataSource;
 
 	public MessageDAO(DataSource dataSource) {
@@ -26,9 +30,9 @@ public class MessageDAO {
 			ps.setTimestamp(4, new Timestamp(msg.getTimestamp()));
 			ps.setString(5, msg.getMessageType());
 			ps.executeUpdate();
-			System.out.println("Message saved: " + msg);
+			log.debug("Message saved: {}", msg);
 		} catch (SQLException e) {
-			System.err.println("error: save" + e.getMessage());
+			log.error("Failed to save message: {}", e.getMessage());
 			throw e;
 		}
 		return msg;
@@ -52,7 +56,7 @@ public class MessageDAO {
 				}
 			}
 		} catch (SQLException e) {
-			System.err.println("error: findByFriendChatRoomId" + e.getMessage());
+			log.error("Failed to find messages by friend chat room ID: {}", e.getMessage());
 			throw e;
 		}
 		return list;
@@ -76,7 +80,7 @@ public class MessageDAO {
 				}
 			}
 		} catch (SQLException e) {
-			System.err.println("error: findByChannelId" + e.getMessage());
+			log.error("Failed to find messages by channel ID: {}", e.getMessage());
 			throw e;
 		}
 		return list;
@@ -121,7 +125,7 @@ public class MessageDAO {
 				}
 			}
 		} catch (SQLException e) {
-			System.err.println("error: findByChannelOrderByTimestampAsc" + e.getMessage());
+			log.error("Failed to find messages by channel: {}", e.getMessage());
 			throw e;
 		}
 		list.sort((m1, m2) -> Long.compare(m1.getTimestamp(), m2.getTimestamp()));

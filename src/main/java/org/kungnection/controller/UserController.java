@@ -4,24 +4,34 @@ import org.kungnection.model.*;
 import org.kungnection.dto.UserUpdateDTO;
 import org.kungnection.repository.UserDAO;
 import org.kungnection.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * REST controller for user-related operations including channels, friends, and profile management.
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserDAO userDAO;
+    private final UserService userService;
+    private final UserDAO userDAO;
 
-    // 🔧 工具方法：依 ID 取出 User 實體（簡化重複程式碼）
+    public UserController(UserService userService, UserDAO userDAO) {
+        this.userService = userService;
+        this.userDAO = userDAO;
+    }
+
+    /**
+     * Helper method to fetch a user by ID or throw an exception.
+     */
     private User getUserOrThrow(int id) {
         try {
             return userDAO.findById(id);
@@ -30,7 +40,9 @@ public class UserController {
         }
     }
 
-    // ✅ 創立頻道
+    /**
+     * Creates a new channel with the authenticated user as the owner.
+     */
     @PostMapping("/channels")
     public Channel createChannel(HttpServletRequest request, @RequestBody String channelName) {
         int userId = ((Long) request.getAttribute("userId")).intValue();
@@ -38,16 +50,20 @@ public class UserController {
         return userService.createChannel(user, channelName);
     }
 
-    // ✅ 加入頻道（用六碼代碼）
+    /**
+     * Joins an existing channel using a 6-character invite code.
+     */
     @PostMapping("/channels/join")
     public String joinChannel(HttpServletRequest request, @RequestParam String code) {
         int userId = ((Long) request.getAttribute("userId")).intValue();
-        System.out.println("✅ token userId = " + userId + ", code = " + code);
+        log.debug("User {} attempting to join channel with code: {}", userId, code);
         User user = getUserOrThrow(userId);
         return userService.joinChannel(user, code) ? "Joined successfully." : "Join failed.";
     }
 
-    // ✅ 加好友
+    /**
+     * Adds a friend by user IDs.
+     */
     @PostMapping("/friends")
     public String addFriend(@RequestParam int userId, @RequestParam int friendId) {
         User user = getUserOrThrow(userId);
@@ -55,19 +71,17 @@ public class UserController {
         return userService.addFriend(user, friend) ? "Friend added." : "Add failed.";
     }
 
+    /**
+     * Adds a friend by username lookup.
+     */
     @PostMapping("/friends/add")
     public String addFriendByUsername(HttpServletRequest request, @RequestParam String username) {
-        System.out.println("🚨 Controller 中取得的 userId = " + request.getAttribute("userId"));
         try {
             int userId = ((Long) request.getAttribute("userId")).intValue();
-
-            System.out.println("🔍 登入者 userId: " + userId);
-            System.out.println("🔍 欲加好友 username: " + username);
+            log.debug("User {} attempting to add friend: {}", userId, username);
 
             User currentUser = getUserOrThrow(userId);
             User friend = userDAO.findByUsername(username);
-
-            System.out.println("✅ friend: " + (friend != null ? friend.getId() : "找不到"));
 
             if (friend == null) {
                 return "User not found: " + username;
@@ -78,53 +92,58 @@ public class UserController {
             }
 
             boolean success = userService.addFriend(currentUser, friend);
-            System.out.println("✅ addFriend() 回傳: " + success);
-
             return success ? "Friend added." : "Already friends.";
 
         } catch (Exception e) {
-            e.printStackTrace(); // ✅ 印出完整錯誤訊息
+            log.error("Failed to add friend: {}", e.getMessage(), e);
             return "Internal error: " + e.getMessage();
         }
     }
 
-    // ✅ 顯示好友清單
+    /**
+     * Returns the friend list for a given user.
+     */
     @GetMapping("/friends")
     public List<Friendship> getFriends(@RequestParam int userId) {
         User user = getUserOrThrow(userId);
         return userService.getFriends(user);
     }
 
-    // ✅ 顯示使用者所屬的頻道清單
+    /**
+     * Returns the list of channels a user belongs to.
+     */
     @GetMapping("/channels")
     public List<ChannelMembership> getChannels(@RequestParam int userId) {
         User user = getUserOrThrow(userId);
         return userService.getChannels(user);
     }
 
-    // ✅ 顯示特定頻道的所有成員（用 code 查）
+    /**
+     * Returns all members of a specific channel by channel code.
+     */
     @GetMapping("/channel/members")
     public List<User> getChannelMembers(HttpServletRequest request, @RequestParam String code) {
         Long userId = (Long) request.getAttribute("userId");
-        if (userId == null)
-            throw new RuntimeException("User not authenticated."); // 沒帶 token 或無效 token
+        if (userId == null) {
+            throw new RuntimeException("User not authenticated.");
+        }
         return userService.getUsersInChannel(code);
     }
 
+    /**
+     * Returns sidebar data including friend rooms and channels for the authenticated user.
+     */
     @GetMapping("/sidebar")
     public Map<String, Object> getSidebar(HttpServletRequest request) {
         int userId = ((Long) request.getAttribute("userId")).intValue();
-
         User user = getUserOrThrow(userId);
 
-        // 🔹 Friend Rooms
         List<Map<String, Object>> friends = userService.getFriendChatRooms(user).stream()
                 .map(room -> Map.<String, Object>of(
                         "id", room.getId(),
                         "name", room.getDisplayNameFor(user)))
                 .toList();
 
-        // 🔹 Channels
         List<Map<String, Object>> channels = userService.getChannels(user).stream()
                 .map(cm -> Map.<String, Object>of(
                         "code", cm.getChannel().getCode(),
@@ -136,7 +155,9 @@ public class UserController {
                 "channels", channels);
     }
 
-    //新增
+    /**
+     * Returns the profile of the currently authenticated user.
+     */
     @GetMapping("/me")
     public User getMyProfile(HttpServletRequest request) {
         int userId = ((Long) request.getAttribute("userId")).intValue();
@@ -147,6 +168,9 @@ public class UserController {
         }
     }
 
+    /**
+     * Updates the profile of the currently authenticated user.
+     */
     @PatchMapping("/me")
     public User updateMyProfile(HttpServletRequest request, @RequestBody UserUpdateDTO dto) {
         int userId = ((Long) request.getAttribute("userId")).intValue();

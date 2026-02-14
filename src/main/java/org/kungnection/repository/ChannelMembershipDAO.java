@@ -10,10 +10,13 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.kungnection.model.ChannelMembership;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ChannelMembershipDAO {
+    private static final Logger log = LoggerFactory.getLogger(ChannelMembershipDAO.class);
     private final DataSource dataSource;
 
     public ChannelMembershipDAO(DataSource dataSource) {
@@ -27,9 +30,9 @@ public class ChannelMembershipDAO {
             ps.setInt(1, membership.getUserId());
             ps.setInt(2, membership.getChannelId());
             ps.executeUpdate();
-            System.out.println("Channel membership saved: " + membership);
+            log.debug("Channel membership saved: {}", membership);
         } catch (SQLException e) {
-            System.err.println("error: save" + e.getMessage());
+            log.error("Failed to save channel membership: {}", e.getMessage());
             throw e;
         }
     }
@@ -41,13 +44,9 @@ public class ChannelMembershipDAO {
             ps.setInt(1, userId);
             ps.setInt(2, channelId);
             int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Channel membership deleted: " + userId + " - " + channelId);
-            } else {
-                System.out.println("No channel membership found to delete for: " + userId + " - " + channelId);
-            }
+            log.debug("Channel membership delete affected {} rows for userId={}, channelId={}", rowsAffected, userId, channelId);
         } catch (SQLException e) {
-            System.err.println("error: delete" + e.getMessage());
+            log.error("Failed to delete channel membership: {}", e.getMessage());
             throw e;
         }
     }
@@ -66,7 +65,7 @@ public class ChannelMembershipDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: finding channel memberships" + e.getMessage());
+            log.error("Failed to find channel memberships by user ID: {}", e.getMessage());
             throw e;
         }
         return memberships;
@@ -86,7 +85,7 @@ public class ChannelMembershipDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: finding channel memberships" + e.getMessage());
+            log.error("Failed to find channel memberships by channel ID: {}", e.getMessage());
             throw e;
         }
         return memberships;
@@ -104,7 +103,7 @@ public class ChannelMembershipDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("error: existsByUserAndChannel" + e.getMessage());
+            log.error("Failed to check channel membership existence: {}", e.getMessage());
             throw e;
         }
         return false;

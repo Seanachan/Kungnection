@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * Represents a user in the Kungnection chat application.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,13 +14,17 @@ public class User {
 
     private int id;
 
-    private String username; // 顯示名稱用帳號（非登入用）
+    /** Display username (not used for login) */
+    private String username;
 
-    private String email; // 登入用電子信箱（唯一）
+    /** Email address used for authentication (unique) */
+    private String email;
 
-    private String password; // 密碼（建議加密儲存）
+    /** Password (should be stored hashed in production) */
+    private String password;
 
-    private String nickname; // 使用者暱稱（可選）
+    /** Optional user nickname */
+    private String nickname;
 
     private List<ChannelMembership> channelMemberships;
 
